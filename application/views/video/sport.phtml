@@ -1,0 +1,68 @@
+<?php $this->display('layouts/header.phtml'); ?>
+<?php $this->display('layouts/navbar.phtml'); ?>
+<?php $this->display('layouts/sidebar.phtml'); ?>
+<div class="main-grids">
+    <?php if($contents){ foreach($contents as $key => $value){ ?>
+    <div class="recommended">
+        <div class="recommended-grids">
+            <div class="recommended-info">
+                <div class="heading">
+                    <h3><?php echo $group_menus[$key];?></h3>
+                </div>
+                <div class="heading-right">
+                    <a  href="#small-dialog8" class="play-icon popup-with-zoom-anim">Subscribe</a>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+            
+            <?php  foreach ($value as $kk => $vv){?>
+            <div class="col-md-2 resent-grid recommended-grid sports-recommended-grid">
+                <div class="resent-grid-img recommended-grid-img">
+                    <a href="/index/show?id=<?php echo $vv['id'];?>"><img src="<?php echo $vv['thumb'];?>" alt="" /></a>
+                    <div class="time small-time sports-tome">
+                        <p>7:30</p>
+                    </div>
+                    <div class="clck sports-clock">
+                        <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="resent-grid-info recommended-grid-info">
+                    <h5><a href="/index/show?id=<?php echo $vv['id'];?>" class="title"><?php echo $vv['title'];?><</a></h5>
+                    <p class="author"><a href="#" class="author"><?php echo $vv['authorid'];?></a></p>
+                    <p class="views"><?php echo $vv['click'];?> views</p>
+                </div>
+            </div>
+            <?php }?>
+            <div class="clearfix"> </div>
+        </div>
+    </div>
+    <?php }}?>
+    <center><?php echo $page;?></center>
+    
+    
+</div>
+
+<?php $this->display('layouts/footer.phtml'); ?>
+
+<script type="text/javascript">
+    function GetQueryString(name)
+    {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null)
+            return  unescape(r[2]);
+        return null;
+    }
+    $(document).ready(function () {
+        var pos = $('#grid' + GetQueryString('c'));
+        $("html, body").animate({
+            scrollTop: ((pos.offset().top) - 100) + "px"
+        }, {
+            duration: 500,
+            easing: "swing"
+        });
+    });
+
+
+</script>
+

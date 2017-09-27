@@ -1,0 +1,25 @@
+{
+    "require": {
+        "illuminate/database": "5.0.*",
+        "illuminate/events": "5.0.*",
+        "symfony/debug": "2.6.*",
+        "symfony/var-dumper": "2.6.*",
+        "s1lentium/iptools": "^1.1",
+        "catfan/Medoo": "^1.4",
+        "joomla/input": "^1.2",
+        "duncan3dc/sessions": "^1.2",
+        "colinmollenhour/credis": "^1.8"
+    },
+
+    "autoload" : {
+        "App\\Models\\": "application/models",
+        "classmap": [
+            "application/models",
+            "application/library",
+            "application/controllers",
+            "application/views",
+            "application/plugins",
+            "application/modules"
+        ]
+    }
+}

@@ -1,0 +1,118 @@
+<?php $this->display('layouts/header.phtml');?>
+<?php $this->display('layouts/navbar.phtml');?>
+<?php $this->display('layouts/sidebar.phtml');?>
+
+<div class="main-grids">
+    <div class="top-grids">
+        <div class="recommended-info">
+            <h3>Recent Videos</h3>
+        </div>
+        <?php if($video){
+        foreach ($video as $key =>$value){
+        ?>
+        <div class="col-md-4 resent-grid recommended-grid slider-top-grids">
+            <div class="resent-grid-img recommended-grid-img">
+                <a href="/index/show?id=<?php echo $value['id'];?>"><img src="<?php echo $value['thumb']?>" alt="" /></a>
+                <div class="time"><p><?php echo $value['time_length'];?></p></div>
+                <div class="clck"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></div>
+            </div>
+            <div class="resent-grid-info recommended-grid-info">
+                <h3><a href="/index/show?id=<?php echo $value['id'];?>" class="title title-info"><?php echo $value['title'];?></a></h3>
+                <ul>
+                    <li><p class="author author-info"><a href="#" class="author"><?php echo $value['authorid'];?></a></p></li>
+                    <li class="right-list"><p class="views views-info"><?php echo $value['click'];?> views</p></li>
+                </ul>
+            </div>
+        </div>
+        <?php }}?>
+        <div class="clearfix"> </div>
+    </div>
+    <div class="recommended">
+        <div class="recommended-grids">
+            <div class="recommended-info">
+                <h3>Animated Cartoon</h3>
+            </div>
+            <script src="/assets/js/responsiveslides.min.js"></script>
+            <script>
+                // You can also use "$(window).load(function() {"
+                $(function () {
+                    // Slideshow 4
+                    $("#slider3").responsiveSlides({
+                        auto: true,
+                        pager: false,
+                        nav: true,
+                        speed: 500,
+                        namespace: "callbacks",
+                        before: function () {
+                            $('.events').append("<li>before event fired.</li>");
+                        },
+                        after: function () {
+                            $('.events').append("<li>after event fired.</li>");
+                        }
+                    });
+                });
+            </script>
+            <div  id="top" class="callbacks_container">
+                <ul class="rslides" id="slider3">
+                    <?php if($slideshow){  foreach ($slideshow as $kk => $vv){?>
+                    <li>
+                        <div class="animated-grids">
+			<?php foreach ($vv as $k => $v){?>
+			<div class="col-md-3 resent-grid recommended-grid slider-first">
+                            <div class="resent-grid-img recommended-grid-img">
+                                <a href="/index/show?id=<?php echo $v['id'];?>"><img src="/assets/images/c.jpg" alt="" /></a>
+                                <div class="time small-time slider-time"><p><?php echo $v['time_length'];?></p></div>
+                                <div class="clck small-clck"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></div>
+                            </div>
+                            <div class="resent-grid-info recommended-grid-info">
+                                <h5><a href="/index/show?id=<?php echo $v['id'];?>" class="title"><?php echo $v['title'];?></a></h5>
+                                <div class="slid-bottom-grids">
+                                    <div class="slid-bottom-grid">
+                                        <p class="author author-info"><a href="#" class="author"><?php echo $v['authorid'];?></a></p>
+                                    </div>
+                                    <div class="slid-bottom-grid slid-bottom-right">
+                                        <p class="views views-info"><?php echo $v['click'];?> views</p>
+                                    </div>
+                                    <div class="clearfix"> </div>
+                                </div>
+                            </div>
+			</div>
+			<?php }?>
+			<div class="clearfix"> </div>
+                        </div>
+                    </li>
+                    <?php }}?>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <?php if($group){ foreach ($group as $key => $value){?>
+    <div class="recommended">
+        <?php foreach ($value as $kk => $vv){?>
+        <div class="recommended-grids">
+            <?php if($kk == 0){ ?>
+            <div class="recommended-info"><h3><?php echo $group_menus[$key];?></h3></div>
+            <?php } ?>
+            <?php foreach ($vv as $k => $v){?>
+                <div class="col-md-3 resent-grid recommended-grid">
+                    <div class="resent-grid-img recommended-grid-img">
+                        <a href="/index/show?id=<?php echo $v['id']?>"><img src="<?php echo $v['thumb']?>" alt="" /></a>
+                        <div class="time small-time"><p><?php echo $v['time_length']?></p></div>
+                        <div class="clck small-clck"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></div>
+                    </div>
+                    <div class="resent-grid-info recommended-grid-info video-info-grid">
+                        <h5><a href="/index/show?id=<?php echo $v['id']?>" class="title"><?php echo $v['title']?></a></h5>
+                        <ul>
+                            <li><p class="author author-info"><a href="#" class="author"><?php echo $v['authorid']?></a></p></li>
+                            <li class="right-list"><p class="views views-info"><?php echo $v['click']?> views</p></li>
+                        </ul>
+                    </div>
+                </div>
+            <?php }?>
+            <div class="clearfix"></div>
+        </div>
+        <?php } ?>
+    </div>
+    <?php }}?>
+</div>
+<?php $this->display('layouts/footer.phtml');?>

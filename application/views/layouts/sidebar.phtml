@@ -1,0 +1,63 @@
+
+<div class="col-sm-3 col-md-2 sidebar">
+    <div class="top-navigation">
+        <div class="t-menu">MENU</div>
+        <div class="t-img">
+            <img src="/assets/images/lines.png" alt="" />
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+    <div class="drop-navigation drop-navigation">
+        <!---菜单-->
+        <ul class="nav nav-sidebar">
+        <?php
+           if($menus){
+               $html_nav=''; $num = 1;
+               foreach ($menus as $key => $value){
+                   $active = '';
+                   if(isset($value['children']) && !empty($value['children'])){
+                       $html_nav.='<li><a href="'.$value['url'].'" class="menu"><span class="'.$value['icon'].'" aria-hidden="true"></span>'.$value['name'].'<span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span></a></li>';
+                       $html_nav.='<ul class="menu_sub">';
+                       foreach ($value['children'] as $kk => $vv){
+                           $html_nav.='<li><a href="'.$vv['url'].'?c='.$vv['id'].'">'.$vv['name'].'</a></li>';
+                       }
+                       $html_nav.='</ul>';
+                   }else{
+                      if($num==1) $active='active';
+                       $html_nav.='<li class="'.$active.'"><a href="'.$value['url'].'?c='.$value['id'].'" class="'.$value['class'].'"><span class="'.$value['icon'].'" aria-hidden="true"></span>'.$value['name'].'</a></li>';
+                   }
+                   ++$num;
+               }
+               echo $html_nav;
+           }
+        ?>
+        </ul>
+        <!-- script-for-menu -->
+        <script>
+            $('.menu_sub').hide();
+            $("li a.menu").click(function () {
+                $(this).parent('li').next('ul.menu_sub').slideToggle(300);
+            });
+
+            $(".top-navigation").click(function () {
+                $(".drop-navigation").slideToggle(300, function () {
+                    // Animation complete.
+                });
+            });
+        </script>
+        <!--div class="side-bottom">
+            <div class="side-bottom-icons">
+                <ul class="nav2">
+                    <li><a href="#" class="facebook"> </a></li>
+                    <li><a href="#" class="facebook twitter"> </a></li>
+                    <li><a href="#" class="facebook chrome"> </a></li>
+                    <li><a href="#" class="facebook dribbble"> </a></li>
+                </ul>
+            </div>
+            <div class="copyright">
+                <p>Copyright © 2015 My Play. All Rights Reserved | Design by <a href="http://w3layouts.com/">W3layouts</a></p>
+            </div>
+        </div-->
+    </div>
+</div>
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
