@@ -28,7 +28,7 @@ class Log_Driver_File
      */
     public function write ($log, $destination = '')
     {
-         $this->clearLog();
+        
         $now = date($this->config['log_time_format']);
         if (empty($destination))
         $destination = date($this->config['log_name']) . '.log';
@@ -56,7 +56,7 @@ class Log_Driver_File
             }
         }
         clearstatcache();
-       
+        $this->clearLog();//删除文件
         error_log(
             "[{$now}] " . $_SERVER['REMOTE_ADDR'] . ' ' . $_SERVER['REQUEST_URI'] . "\r\n{$log}\r\n",
             3, 
@@ -71,10 +71,20 @@ class Log_Driver_File
         }
     }
     
+    //删除文件
     public function clearLog(){
         $log_num = $this->config['log_num'];
         $log_path = $this->config['log_path'];
-        dd($log_path);
-        glob($log_path);
+        $file_logs = glob($log_path.'*');
+        $file_number = count($file_logs);
+        $rm_file_number = $file_number-$log_num;
+        if($rm_file_number > 0){
+            for($i=0;$i<$rm_file_number;$i++){
+                $filename = $file_logs[$i];
+                if(file_exists($filename)){
+                    unlink($filename);
+                }
+            }
+        }
     }
 }
