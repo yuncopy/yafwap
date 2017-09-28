@@ -74,7 +74,7 @@ class Log_Driver_File
     public function clearLog(){
         $log_num = $this->config['log_num'];
         $log_path = $this->config['log_path'];
-        dd($log_path);
+        dd($log_num);
         glob($log_path);
     }
 }

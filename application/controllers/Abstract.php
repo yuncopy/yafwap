@@ -19,7 +19,8 @@ abstract class AbstractController extends Yaf_Controller_Abstract
      */
     public function init()
     {
-         Log_Log::info(__METHOD__.' content init network:' . json_encode($telcoName_Arr), true, true);  // 记录日志
+        
+        Log_Log::info(__METHOD__.' content init network:' . json_encode($telcoName_Arr), true, true);  // 记录日志
         //组件对象 (输入)
         // $this->getRequest()->getQuery("paramname", "default value");
         // http://php.net/manual/zh/class.yaf-request-http.php
