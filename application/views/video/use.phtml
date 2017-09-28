@@ -3,15 +3,43 @@
 <?php $this->display('layouts/sidebar.phtml'); ?>
 <div class="main-grids">
     <div class="show-top-grids">
-        <div id="editor">
-            <h1>Hello world!</h1>
+        <div class="recommended-info">
+        <?php if ($applogin) { ?>
+            <div id="editor">
+                <?php echo $use; ?>
+            </div>
+            <div class="continue-button pull-right">
+                <a  id="content" href="javascript:void(0)" class=" hvr-shutter-out-horizontal play-icon">SAVE</a>
+            </div>
+        <div class="clearfix"> </div>
+        <?php } else { ?>
+            <?php echo $use; ?>
+        <?php } ?>
         </div>
     </div>
 </div>
 <?php $this->display('layouts/footer.phtml'); ?>
-<script src="/ckeditor/ckeditor.js"></script>
-<!--<script src="/ckeditor/samples/js/sample.js"></script>-->
-<script src="/assets/js/wap-ckeditor.js"></script>
-<script>
-    initSample();
-</script>
+<?php if ($applogin) { ?>
+    <script src="/ckeditor/ckeditor.js"></script>
+    <!--<script src="/ckeditor/samples/js/sample.js"></script>-->
+    <script src="/assets/js/wap-ckeditor.js"></script>
+    <script>
+        initSample();
+        // 保存内容  editor 是ckeditor的id或者名字
+        var content = CKEDITOR.instances.editor.getData();
+        if(content.length > 0){
+            $('#content').click(function(){
+                $.post("/video/use", { content: content ,cid : GetQueryString('c')},function(data){
+                    console.log(data);
+                });
+            });
+        }
+        
+        function GetQueryString(name)
+        {
+             var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+             var r = window.location.search.substr(1).match(reg);
+             if(r!=null)return  unescape(r[2]); return null;
+        }
+    </script>
+<?php } ?>

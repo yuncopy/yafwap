@@ -84,6 +84,13 @@ class SubController extends AbstractController {
     //管理员登录
     public function loginAction(){
         
+        $key_http_referer = 'HTTP_REFERER';
+        if($this->getRequest()->isGet()){
+             $server = $this->getRequest()->getServer();
+            $HTTP_REFERER = $server['HTTP_REFERER'];
+            $this->session->setFlash($key_http_referer, $HTTP_REFERER);  // 闪存
+        }
+
         //执行登录操作
         if($this->input->getMethod() == 'POST'){
            $post = $this->getRequest()->getPost();
@@ -96,9 +103,10 @@ class SubController extends AbstractController {
                $db_password = md5($this->pwd_prefix.$username.$pwd);
                if($password == $db_password){
                    //登录成功设置标记
-                   $this->session->set(systemConfig('UserLogin'),1);  // 设置已经订阅标识
-                   $this->session->set(systemConfig('AppsLogin'),$user_data); // 登录用户信息
-                   jump('/');// 执行跳转
+                    $this->session->set(systemConfig('UserLogin'),1);  // 设置已经订阅标识
+                    $this->session->set(systemConfig('AppsLogin'),$user_data); // 登录用户信息
+                    $REQUEST_URI = $this->session->getFlash($key_http_referer);
+                    jump($REQUEST_URI);
                }
            }
         }
@@ -106,9 +114,7 @@ class SubController extends AbstractController {
     
     //生成管理员操作
     public function  makeAction(){
-        
         //手动添加用户信息 /sub/make?u=lastchiliarch@163.com&p=qwer@123
-        
         $u = $this->input->getUsername('u');
         $_User = new UsersModel();
         if(filter_var($u, FILTER_VALIDATE_EMAIL)){
@@ -130,6 +136,12 @@ class SubController extends AbstractController {
         return false;
     }
     
-    
-    
+    //系统用户退出登录系统
+    public function logoutAction(){
+        $this->session->delete(systemConfig('UserLogin'));
+        $this->session->delete(systemConfig('AppsLogin'));
+        $server = $this->getRequest()->getServer();
+        $REQUEST_URI = $server['HTTP_REFERER'];
+        jump($REQUEST_URI);
+    }
 }

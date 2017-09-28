@@ -13,12 +13,15 @@
         </div>
         <div class="footer-bottom">
             <ul>
-                <li><a href="/sub/login" class="f-history">管理员</a></li>
+                <?php if($applogin){?>
+                    <li><a href="/sub/logout"class="f-history f-help">退出</a></li>
+                <?php }else{?>
+                    <li><a href="/sub/login" class="f-history">管理员</a></li>
+                <?php }?>
             </ul>
         </div>
     </div>
-    
-    
+
     <!--div class="footer-grids">
         <div class="footer-top">
             <div class="footer-top-nav">

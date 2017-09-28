@@ -59,7 +59,26 @@ class VideoController extends AbstractController {
     }
     
     //本使用条款
-    public function useAction(){}
+    public function useAction(){
+       $post =  $this->getRequest()->isPost();
+       $contents = new ContentsModel();
+       if($post){
+           $post_data = $this->getRequest()->getPost();
+           $content = $post_data['content'];
+           $cid = $post_data['cid'];
+           $affect_number = $contents->saveGetContent(['cid'=>$cid],['text'=>$content]);
+           if($affect_number){
+               $out = ['status'=>200,'data'=>$affect_number,'content'=>'successful'];
+           }else{
+               $out = ['status'=>400,'content'=>'unsuccessful'];
+           }
+           die(json_encode($out));
+       }else{
+           $cid = $this->input->get('c');
+           $cont = $contents->saveGetContent(['cid'=>$cid]);
+           $this->assign(array('use'=>$cont['text']));
+       }
+    }
     
     // 客服热血
     public function serviceAction(){
@@ -68,7 +87,27 @@ class VideoController extends AbstractController {
     }
     
     // 指导
-    public function guideAction(){}
+    public function guideAction(){
+        $post =  $this->getRequest()->isPost();
+       $contents = new ContentsModel();
+       if($post){
+           $post_data = $this->getRequest()->getPost();
+           $content = $post_data['content'];
+           $cid = $post_data['cid'];
+           $affect_number = $contents->saveGetContent(['cid'=>$cid],['text'=>$content]);
+           if($affect_number){
+               $out = ['status'=>200,'data'=>$affect_number,'content'=>'successful'];
+           }else{
+               $out = ['status'=>400,'content'=>'unsuccessful'];
+           }
+           die(json_encode($out));
+       }else{
+           $cid = $this->input->get('c');
+           $cont = $contents->saveGetContent(['cid'=>$cid]);
+           $this->assign(array('use'=>$cont['text']));
+       }
+        
+    }
     
     
     

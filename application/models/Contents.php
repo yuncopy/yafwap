@@ -207,13 +207,16 @@ class ContentsModel extends BlueModel
         }
     }
     
-    
-    // 按照获取列表
-    public function  groupCategory(){
-        
-        
-        //$this->getCategory();
-        
+    // 更新保存信息
+    public function saveGetContent($where=null,$data=null){
+        if(!empty($data) && is_array($where)){
+            $where['LIMIT'] = 1;   //限制一条
+            $contents = $this->update($this->table,$data,$where);
+            return $contents;
+        }else{
+            return $this->get($this->table,$this->filed_name,$where);
+        }
     }
+
 }
 
