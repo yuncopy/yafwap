@@ -262,7 +262,21 @@ if (!function_exists('getmsisdn')) {
     }
 }
 
-
+if (!function_exists('microtime_float')) {
+    /**
+     * 运行记录 记录到毫秒
+     */
+    function  microtime_float ($step=1,$file='/tmp/times.log')
+    {
+        list( $usec ,  $sec ) =  explode ( " " ,  microtime ());
+        $micTime =  ((float) $usec  + (float) $sec );
+        list($usecm, $secm) = explode(".", $micTime);
+        $date = date('Y-m-d H:i:s x',$usecm);
+        $text = str_replace('x', $secm, $date);
+        //运行记录
+        file_put_contents($file, "step:{$step}|{$text}".PHP_EOL , FILE_APPEND);
+    }
+}
 
 // 订阅函数
 if (!function_exists('encrypt')) {

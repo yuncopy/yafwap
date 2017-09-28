@@ -19,8 +19,7 @@ abstract class AbstractController extends Yaf_Controller_Abstract
      */
     public function init()
     {
-        
-        Log_Log::info(__METHOD__.' content init network:' . json_encode($telcoName_Arr), true, true);  // 记录日志
+        microtime_float(1);
         //组件对象 (输入)
         // $this->getRequest()->getQuery("paramname", "default value");
         // http://php.net/manual/zh/class.yaf-request-http.php
@@ -33,10 +32,12 @@ abstract class AbstractController extends Yaf_Controller_Abstract
             Yaf_Registry::set('session',$this->session);
         };
         
+        microtime_float(2);
         $this->site = $this->getSite(); // 网站类型 视频，游戏
         $this->menus(); // 加载菜单
         $this->getOptions(); // 网站描述信息
         $telco = $this->getTelco(); // 获取运营商
+        microtime_float(3);
         $this->checkLogin();  // 检查是否登录系统
     }
    
