@@ -19,7 +19,7 @@ abstract class AbstractController extends Yaf_Controller_Abstract
      */
     public function init()
     {
-        microtime_float(1);
+        
         //组件对象 (输入)
         // $this->getRequest()->getQuery("paramname", "default value");
         // http://php.net/manual/zh/class.yaf-request-http.php
@@ -39,6 +39,7 @@ abstract class AbstractController extends Yaf_Controller_Abstract
         $telco = $this->getTelco(); // 获取运营商
         microtime_float(3);
         $this->checkLogin();  // 检查是否登录系统
+        $this->appLogin();
     }
    
     // 检查是否MT成功过
@@ -47,8 +48,17 @@ abstract class AbstractController extends Yaf_Controller_Abstract
         $login = $this->session->get($IsLogin); 
         $this->assign(array('login'=>$login));
     }
-
     
+    // 检查用户是否成功登录
+    public function appLogin(){
+        $UserLogin = systemConfig('UserLogin');
+        $applogin = $this->session->get($UserLogin);
+       
+        $this->assign(array('applogin'=>$applogin));
+    }
+
+
+
     //获取运营商
     public function getTelco(){
         if(empty(self::$telco_arr)){
@@ -143,6 +153,13 @@ abstract class AbstractController extends Yaf_Controller_Abstract
         }
         return  $site;
    }
+   
+    /**
+    * 错误输出
+    */
+    public function error($status = '400', $message = '') {
+        return json_encode(['status' => (string) $status, 'message' => $message], JSON_UNESCAPED_UNICODE);
+    }
    
  
 

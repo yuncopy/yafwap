@@ -9,6 +9,8 @@ return [
     'IsLogin'       => '_IsLogin'.md5(getRealIp()),
     'Options'       => '_Options'.md5(getRealIp()),
     'Menus'         => '_Menus'.md5(getRealIp()),
+    'UserLogin'     => '_UserLogin'.md5(getRealIp()),
+    'AppsLogin'     => '_AppsLogin'.md5(getRealIp()),
     
 ];
 

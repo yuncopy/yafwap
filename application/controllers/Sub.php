@@ -5,10 +5,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 class SubController extends AbstractController {
     
     public  $server = 'http://vas.vietteltelecom.vn/MPS/';
-    
+    private $pwd_prefix = 'wap_';
+
+
     public function indexAction(){
         $svid = $this->input->get('svid',false);
         $sessionid = $this->input->get('sessionid',false);
@@ -78,8 +81,67 @@ class SubController extends AbstractController {
     }
     
     
+    //管理员登录
+    public function loginAction(){
+        
+        $key_http_referer = 'HTTP_REFERER';
+        if($this->getRequest()->isGet()){
+             $server = $this->getRequest()->getServer();
+            $HTTP_REFERER = $server['HTTP_REFERER'];
+            $this->session->setFlash($key_http_referer, $HTTP_REFERER);  // 闪存
+        }
+
+        //执行登录操作
+        if($this->input->getMethod() == 'POST'){
+           $post = $this->getRequest()->getPost();
+           $username = trim($post['username']);
+           $pwd = trim($post['password']);
+           if(filter_var($username, FILTER_VALIDATE_EMAIL)){
+               $_User = new UsersModel();
+               $user_data = $_User->checkMail($username);
+               $password = $user_data['password'];
+               $db_password = md5($this->pwd_prefix.$username.$pwd);
+               if($password == $db_password){
+                   //登录成功设置标记
+                    $this->session->set(systemConfig('UserLogin'),1);  // 设置已经订阅标识
+                    $this->session->set(systemConfig('AppsLogin'),$user_data); // 登录用户信息
+                    $REQUEST_URI = $this->session->getFlash($key_http_referer);
+                    jump($REQUEST_URI);
+               }
+           }
+        }
+    }
     
+    //生成管理员操作
+    public function  makeAction(){
+        //手动添加用户信息 /sub/make?u=lastchiliarch@163.com&p=qwer@123
+        $u = $this->input->getUsername('u');
+        $_User = new UsersModel();
+        if(filter_var($u, FILTER_VALIDATE_EMAIL)){
+            $query = $this->getRequest()->getQuery();
+            $p = $query['p'];
+            if($p && $u){
+                if(!$_User->checkMail($u)){
+                    $create_data = [ 'email'=>$u, 'password'=>md5($this->pwd_prefix.$u.$p)];
+                    if($_User->createUser($create_data)){
+                        $error = $this->error('200','Creating a successful'); 
+                    }
+                }else
+                    $error = $this->error('501','The user already exists'); 
+            }else
+                $error = $this->error('400','Enter the correct password');
+        }else
+            $error = $this->error('400','Enter the correct mailbox');
+        echo format_json($error);
+        return false;
+    }
     
-    
-    
+    //系统用户退出登录系统
+    public function logoutAction(){
+        $this->session->delete(systemConfig('UserLogin'));
+        $this->session->delete(systemConfig('AppsLogin'));
+        $server = $this->getRequest()->getServer();
+        $REQUEST_URI = $server['HTTP_REFERER'];
+        jump($REQUEST_URI);
+    }
 }
