@@ -313,7 +313,6 @@ if (!function_exists('systemConfig')) {
 
 // 设置网络类型
 if (!function_exists('netType')) {
-
     function netType($value = null) {
         static $NetType;
         $netType_key = systemConfig('NetType');  // 设置键
@@ -325,16 +324,31 @@ if (!function_exists('netType')) {
         }
         return $NetType;
     }
+}
 
+// 获取运营商
+if (!function_exists('getTelco')) {
+    function getTelco($value = null) {
+        $getTelco_key = systemConfig('GetTelco');  // 设置键
+        $session = Yaf_Registry::get('session'); // 获取SESSIO对象
+        //$session->delete($getTelco_key);
+        if ($value) {
+            $session->set($getTelco_key,serialize( $value));
+        } else {
+            $Telco = unserialize($session->get($getTelco_key));
+        }
+        return !empty($Telco) ? $Telco : null;
+    }
 }
 
 
-if (!function_exists('videourl')) {
+
+if (!function_exists('videViettel')) {
     /*
      * 获取订阅地址
      */
 
-    function videourl() {
+    function videViettel() {
         $UserSub = systemConfig('UserSub');
         $session = Yaf_Registry::get('session'); // 获取SESSIO对象
         $UserContent = $session->get($UserSub);
@@ -364,6 +378,16 @@ if (!function_exists('getmsisdn')) {
         $session = Yaf_Registry::get('session'); // 获取SESSIO对象
         $msisdn = $session->get($GetMsisdn);
         return !empty($msisdn) ? $msisdn : false;
+    }
+}
+
+//添加日志
+if (!function_exists('saveLog')) {
+    function saveLog($action,$content){
+        if($action && $content){
+            $Logs = new LogsModel();
+            $Logs->addLog($action,$content);
+        }
     }
 }
 

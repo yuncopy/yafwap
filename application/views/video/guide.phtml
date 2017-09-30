@@ -23,17 +23,26 @@
     <script src="/ckeditor/ckeditor.js"></script>
     <!--<script src="/ckeditor/samples/js/sample.js"></script>-->
     <script src="/assets/js/wap-ckeditor.js"></script>
+    <script src="/dialog/jq_mydialog.js"></script>
+    <link href="/dialog/my_dialog.css" type="text/css" rel="stylesheet" />
     <script>
         initSample();
         // 保存内容  editor 是ckeditor的id或者名字
-        var content = CKEDITOR.instances.editor.getData();
-        if(content.length > 0){
-            $('#content').click(function(){
-                $.post("/video/use", { content: content ,cid : GetQueryString('c')},function(data){
-                    console.log(data);
-                });
-            });
-        }
+        $('#content').click(function () {
+            var content = CKEDITOR.instances.editor.getData();
+            if (content.length > 0) {
+                $.post("/video/use", {content: content, cid: GetQueryString('c')}, function (data) {
+                    var tip  = data.content;
+                    $.myalert({
+                        width: "50%",
+                        content: '<b>'+tip+'</b>',
+                        confirm_btn_click: function (e) { //确认按钮点击事件
+                            $.myalert("getDialog").mydialog("hide");
+                        }
+                    });
+                },"json");
+            }
+        });
         
         function GetQueryString(name)
         {
@@ -42,6 +51,11 @@
              if(r!=null)return  unescape(r[2]); return null;
         }
     </script>
-<?php } ?>
-
+<?php }else{ ?>
+    <script>
+        $(document).ready(function(){
+            $('#collapseOne').collapse('toggle');  //默认打开第一个
+        });
+    </script>   
+<?php }?>
 

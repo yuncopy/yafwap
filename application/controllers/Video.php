@@ -60,13 +60,14 @@ class VideoController extends AbstractController {
     
     //本使用条款
     public function useAction(){
+        
        $post =  $this->getRequest()->isPost();
        $contents = new ContentsModel();
        if($post){
            $post_data = $this->getRequest()->getPost();
-           $content = $post_data['content'];
+           $text = $post_data['content'];
            $cid = $post_data['cid'];
-           $affect_number = $contents->saveGetContent(['cid'=>$cid],['text'=>$content]);
+           $affect_number = $contents->saveGetContent(['cid'=>$cid],['text'=>$text]);
            if($affect_number){
                $out = ['status'=>200,'data'=>$affect_number,'content'=>'successful'];
            }else{
@@ -75,7 +76,7 @@ class VideoController extends AbstractController {
            die(json_encode($out));
        }else{
            $cid = $this->input->get('c');
-           $cont = $contents->saveGetContent(['cid'=>$cid]);
+           $cont = $contents->saveGetContent(['cid'=>$cid,'id[=]'=>16]);
            $this->assign(array('use'=>$cont['text']));
        }
     }
