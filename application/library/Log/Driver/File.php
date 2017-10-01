@@ -73,6 +73,8 @@ class Log_Driver_File
     
     //删除文件
     public function clearLog(){
+        
+        //指定某一个时间段执行一次
         $log_num = $this->config['log_num'];
         $log_path = $this->config['log_path'];
         $file_logs = glob($log_path.'*');
