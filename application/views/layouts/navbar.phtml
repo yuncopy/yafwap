@@ -18,23 +18,23 @@
                     <input type="submit" value=" ">
                 </form>
             </div-->
-    
-              
+
+
             <div class="header-top-right">
-               
+
                 <!--div class="file">
                     <a href="upload.html">Upload</a>
                 </div-->	
                 <div class="signin">
-                    
+
                     <!--探测到手机号，直接直接订阅按钮-->
-                    <?php if(netType()=='3G'){?>
-                        
-                        <a class="play-icon" href="<?php echo videViettel();?>" role="button">Gói ngày (3.000đ/ngày)</a>  <!--按天-->
-                        <a class="play-icon" href="<?php echo videViettel();?>" role="button">Gói tuần (7.000đ/tuần)</a> <!--按周-->
-                        
-                    <?php }?>
-                    
+                    <?php if (netType() == '3G') { ?>
+
+                        <a class="play-icon" href="<?php echo videViettel(); ?>" role="button">Gói ngày (3.000đ/ngày)</a>  <!--按天-->
+                        <a class="play-icon" href="<?php echo videViettel(); ?>" role="button">Gói tuần (7.000đ/tuần)</a> <!--按周-->
+
+                    <?php } ?>
+
                     <!--右上角 登录直接取消-->
                     <!--a href="#small-dialog2" class="play-icon popup-with-zoom-anim">Sign Up</a-->
                     <!-- pop-up-box -->
@@ -188,21 +188,16 @@
                 </div>
                 <div class="signin">
                     <!--登录 WIFI 直接使用SMS登录-->
-                    <?php if(netType()=='WIFI'){?>
-                    <a href="#small-dialog" class="play-icon popup-with-zoom-anim">Sign In</a>
-                    <?php }?>
+                    <?php if (netType() == 'WIFI') { ?>
+                        <a href="#small-dialog" class="play-icon popup-with-zoom-anim">Sign In</a>
+                    <?php } ?>
                     <div id="small-dialog" class="mfp-hide">
                         <h3>Login</h3>
                         <div class="social-sits">
-                            <div class="facebook-button">
-                                <a href="#">Connect with Facebook</a>
-                            </div>
-                            <div class="chrome-button">
-                                <a href="#">Connect with Google</a>
-                            </div>
-                            <div class="button-bottom">
-                                <p>New account? <a href="#small-dialog2" class="play-icon popup-with-zoom-anim">Signup</a></p>
-                            </div>
+                            <p><b>số điện thoại/mật khẩu để đăng nhập. Nếu Quý khách quên mật khẩu, soạn MK gửi 5598.</b></p>
+                            <p class="play-icon popup-with-zoom-anim">- Nếu Quý khách chưa đăng ký dịch vụ, hãy soạn:</p>
+                            <p class="play-icon popup-with-zoom-anim">+ Gói ngày DK1 gửi 5598 (3.000đ/ngày, gia hạn hàng ngày)</p>
+                            <p class="play-icon popup-with-zoom-anim">+ Gói ngày DK7 gửi 5598 (7.000đ/tuần, gia hạn hàng tuần)</p>
                         </div>
                         <div class="signup">
                             <form>
