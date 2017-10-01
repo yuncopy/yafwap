@@ -24,15 +24,19 @@ class IndexController extends AbstractController {
                         $data = $this->getRequest()->getQuery("DATA", false);  //$this->input->get('DATA',false);  会过滤特殊字符，不能使用
                         $svid = $this->input->get('svid','');
                         $sessionid = $this->input->get('sessionid','');
+                        microtime_float(4);
                         $data_encrypt = $this->aes_encrypt_encrypt_video($data,$svid,$sessionid); //探测手机号
                         $josn_to_data = json_decode($data_encrypt,true);
                         Log_Log::info(__METHOD__.' viettel init msisdn :' . $data_encrypt, true, true);  // 记录日志
+                        microtime_float(5);
                         if($josn_to_data['status']== 201){  // 加密跳转
                             $redirect_viettel  = $josn_to_data['redirect'];
                             if(!getmsisdn()){  // 探测手机号
                                 jump($redirect_viettel);// 执行跳转
                             }
+                            microtime_float(6);
                         }else if($josn_to_data['status']== 200){  // 解密获取参数
+                            microtime_float(7);
                             //缓存数据
                             //dd($josn_to_data);
                              if($this->demo){  // 模拟测试数据

@@ -354,12 +354,15 @@ video::-webkit-media-controls-panel {
     var isNumber=true;//定义只判断一次
     function timeHandler(t){
         if( t>10 && isNumber){
+            
             CKobject.getObjectById('ckplayer_a1').videoPause();//暂停播放
             CKobject.getObjectById('ckplayer_a1').removeListener('time','timeHandler');
             isNumber=false;
             console.log('这里的弹出提示代码可以改成执行其它动作的代码');
             //这时是判断当播放时间大于10，并且没有执行过试看判断的情况下进行判断。
             //这里可以弹出登陆层或弹幕提示层
+            
+            
         }
     }
     var flashvars = {
