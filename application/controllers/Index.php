@@ -11,7 +11,7 @@ class IndexController extends AbstractController {
     //入口
     protected $category = [ 11,12,5 ];
     protected  $server_video = 'http://vas.vietteltelecom.vn/MPS/';
-    private $demo = true;  // 模拟测试  http://125.212.233.65:41801/index/index?svid=vnd998  测试地址
+    private $demo = false;  // 模拟测试  http://125.212.233.65:41801/index/index?svid=vnd998  测试地址
     
     public function indexAction(){
         
@@ -66,6 +66,8 @@ class IndexController extends AbstractController {
                                         netType("WIFI"); // 设置网络方式
                                     }else if($RES == '204'){   // 成功获取 RES "RES":"204"
                                         $msisdn = $MOBILE;   // 手机格式 
+                                        //探测成功记录数据库
+                                        saveLog('MSISDN',$josn_to_data);
                                     }
                                     $this->session->set($GetMsisdn,$msisdn);
                                 break;
@@ -73,7 +75,13 @@ class IndexController extends AbstractController {
                                 case 'REGISTER':  // 订阅成功  
                                     $GetMsisdn = $josn_to_data['MOBILE'];
                                     $this->session->set($GetMsisdn,$msisdn);
-                                    dd($data_encrypt);
+                                    // 订阅记录数据库
+                                    saveLog('REGISTER',$josn_to_data);
+                                    if($this->loginMsisdn()){
+                                        $key_http_referer = 'HTTP_REFERER_SUB';
+                                        $REQUEST_URI = $this->session->getFlash($key_http_referer);
+                                        jump($REQUEST_URI);// 执行跳转,订阅成功后回调预览的页面
+                                    }
                                     break;
                                 case 'CANCEL':  // 取消订阅
                                     
@@ -116,12 +124,13 @@ class IndexController extends AbstractController {
     private function  loginMsisdn(){
         $Subscribe = new SubscribeModel();
         $telco = self::$telco_arr;
-        $msisdn = getmsisdn();
-        $msisdn ='966000306';
+        $msisdn = getmsisdn(); //获取手机号
+        //$msisdn ='966000306';
         $msisdn_sub = $Subscribe->loginMt($this->site,$telco['operator'],$msisdn);
         if($msisdn_sub){
             $IsLogin = systemConfig('IsLogin');
             $this->session->set($IsLogin,1);  // 设置已经订阅标识
+            return true;
         }
     }
 

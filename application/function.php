@@ -313,7 +313,6 @@ if (!function_exists('systemConfig')) {
 
 // 设置网络类型
 if (!function_exists('netType')) {
-
     function netType($value = null) {
         static $NetType;
         $netType_key = systemConfig('NetType');  // 设置键
@@ -325,16 +324,31 @@ if (!function_exists('netType')) {
         }
         return $NetType;
     }
+}
 
+// 获取运营商
+if (!function_exists('getTelco')) {
+    function getTelco($value = null) {
+        $getTelco_key = systemConfig('GetTelco');  // 设置键
+        $session = Yaf_Registry::get('session'); // 获取SESSIO对象
+        //$session->delete($getTelco_key);
+        if ($value) {
+            $session->set($getTelco_key,serialize( $value));
+        } else {
+            $Telco = unserialize($session->get($getTelco_key));
+        }
+        return !empty($Telco) ? $Telco : null;
+    }
 }
 
 
-if (!function_exists('videourl')) {
+
+if (!function_exists('videViettel')) {
     /*
      * 获取订阅地址
      */
 
-    function videourl() {
+    function videViettel() {
         $UserSub = systemConfig('UserSub');
         $session = Yaf_Registry::get('session'); // 获取SESSIO对象
         $UserContent = $session->get($UserSub);
@@ -367,21 +381,17 @@ if (!function_exists('getmsisdn')) {
     }
 }
 
-if (!function_exists('microtime_float')) {
-    /**
-     * 运行记录 记录到毫秒
-     */
-    function  microtime_float ($step=1,$file='/tmp/times.log')
-    {
-        list( $usec ,  $sec ) =  explode ( " " ,  microtime ());
-        $micTime =  ((float) $usec  + (float) $sec );
-        list($usecm, $secm) = explode(".", $micTime);
-        $date = date('Y-m-d H:i:s x',$usecm);
-        $text = str_replace('x', $secm, $date);
-        //运行记录
-        file_put_contents($file, "step:{$step}|{$text}".PHP_EOL , FILE_APPEND);
+//添加日志
+if (!function_exists('saveLog')) {
+    function saveLog($action,$content){
+        if($action && $content){
+            $Logs = new LogsModel();
+            $Logs->addLog($action,$content);
+        }
     }
 }
+
+
 
 // 订阅函数
 if (!function_exists('encrypt')) {

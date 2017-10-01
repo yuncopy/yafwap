@@ -18,11 +18,7 @@
                     <input type="submit" value=" ">
                 </form>
             </div-->
-            
-     
-             
-         
-                   
+    
               
             <div class="header-top-right">
                
@@ -33,9 +29,10 @@
                     
                     <!--探测到手机号，直接直接订阅按钮-->
                     <?php if(netType()=='3G'){?>
-                        <!--按周-->
-                        <a class="play-icon" href="<?php echo videourl();?>" role="button">Gói ngày (3.000đ/ngày)</a>
-                        <a class="play-icon" href="<?php echo videourl();?>" role="button">Gói tuần (7.000đ/tuần)</a>
+                        
+                        <a class="play-icon" href="<?php echo videViettel();?>" role="button">Gói ngày (3.000đ/ngày)</a>  <!--按天-->
+                        <a class="play-icon" href="<?php echo videViettel();?>" role="button">Gói tuần (7.000đ/tuần)</a> <!--按周-->
+                        
                     <?php }?>
                     
                     <!--右上角 登录直接取消-->

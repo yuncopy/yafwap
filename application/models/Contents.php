@@ -210,9 +210,9 @@ class ContentsModel extends BlueModel
     // 更新保存信息
     public function saveGetContent($where=null,$data=null){
         if(!empty($data) && is_array($where)){
-            $where['LIMIT'] = 1;   //限制一条
+            $where['LIMIT'] = 1;
             $contents = $this->update($this->table,$data,$where);
-            return $contents;
+            return $contents->rowCount ();
         }else{
             return $this->get($this->table,$this->filed_name,$where);
         }

@@ -21,6 +21,13 @@ class SubController extends AbstractController {
             $subscribe =  $_subscribe->checkSvid($svid);  // 获取订阅信息
             if($subscribe){
                 $charge_url = $this->getReg($subscribe,$msisdn,$sessionid);
+                //设置缓存
+                $key_http_referer = 'HTTP_REFERER_SUB';
+                if($this->getRequest()->isGet()){
+                     $server = $this->getRequest()->getServer();
+                    $HTTP_REFERER = $server['HTTP_REFERER'];
+                    $this->session->setFlash($key_http_referer, $HTTP_REFERER);  // 闪存
+                }
                 jump($charge_url);// 执行跳转
             }
         }else{
