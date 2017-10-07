@@ -151,4 +151,30 @@ class SubController extends AbstractController {
         $REQUEST_URI = $server['HTTP_REFERER'];
         jump($REQUEST_URI);
     }
+    
+     //在没有探测到运营商情况下选择营运商并设置
+     public function  settelcoAction(){
+        $post = $this->getRequest()->getPost();
+        if($post){
+            $msisdn = $post['msisdn'];
+            $telco = $post['telco'];
+            $password = $post['password'];
+            if($msisdn && $telco && $password){
+                //设置运营并登录
+                $subscribe = new SubscribeModel();
+                $subs = $subscribe->userLogin($this->site,$msisdn,$password,$telco);
+                if($subs){
+                    $IsLogin = systemConfig('IsLogin');
+                    $this->session->set($IsLogin,1);  // 设置已经订阅标识
+                    $out = ['status'=>200,'content'=>'Congratulations on your successful login'];
+                }else{
+                    $out = ['status'=>401,'content'=>'The phone format or password is incorrect'];
+                } 
+            }
+        }else{
+            $out = ['status'=>400,'content'=>'parameter error'];
+        } 
+        echo json_encode($out);return false;
+     }
+    
 }

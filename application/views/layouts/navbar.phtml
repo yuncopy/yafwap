@@ -24,9 +24,11 @@
 
                 <!--div class="file">
                     <a href="upload.html">Upload</a>
-                </div-->	
-                <div class="signin">
+                </div-->
 
+
+
+                <div class="signin">
                     <!--探测到手机号，直接直接订阅按钮-->
                     <?php if (netType() == '3G') { ?>
 
@@ -199,12 +201,92 @@
                             <p class="play-icon popup-with-zoom-anim">+ Gói ngày DK1 gửi 5598 (3.000đ/ngày, gia hạn hàng ngày)</p>
                             <p class="play-icon popup-with-zoom-anim">+ Gói ngày DK7 gửi 5598 (7.000đ/tuần, gia hạn hàng tuần)</p>
                         </div>
+                        <style>
+                            .telcoGroup{
+                                margin-bottom: 10px;
+                            }
+                            .telcoClass{
+                                color: #817F7F;
+                                border: solid 1px #817F7F;
+                            }
+                            .radiusLeftClass{
+                                border-top-left-radius: 0;
+                                border-bottom-left-radius: 0;
+                            }
+                            .radiusRightClass{
+                                border-top-right-radius: 0;
+                                border-bottom-right-radius: 0;
+                            }
+                            .selectClass{
+                                background-color: #21DEEF;
+                                color:#F7F7F7;
+                            }
+                            
+                        </style>
                         <div class="signup">
-                            <form>
-                                <input type="text" class="email" placeholder="Enter email / mobile" required="required" pattern="([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?"/>
-                                <input type="password" placeholder="Password" required="required" pattern=".{6,}" title="Minimum 6 characters required" autocomplete="off" />
-                                <input type="submit"  value="LOGIN"/>
+                            <form class="form-horizontal" onsubmit="return false;">                            
+                                <div class="btn-group telcoGroup" role="group" >
+                                    <button type="button" class="btn btn-default telcoClass radiusLeftClass" value="viettel">viettel</button>
+                                    <button type="button" class="btn btn-default telcoClass" value="vinaphone">vinaphone</button>
+                                    <button type="button" class="btn btn-default telcoClass radiusRightClass" value="mobifone">mobifone</button>
+                                </div>
+
+                                <input type="text" id="msisdn" name="msisdn" class="email" placeholder="Enter mobile" required="required" pattern="^[0-9]{6,16}$"/>
+                                <input type="password" id="password" name="password" placeholder="Password" required="required" pattern=".{4,}" title="Minimum 6 characters required" autocomplete="off" />
+                                <input type="submit" id="submitButton" value="LOGIN"/>
                             </form>
+                            <script src="/dialog/jq_mydialog.js"></script>
+                            <link href="/dialog/my_dialog.css" type="text/css" rel="stylesheet" />
+                            <script>
+                                $(document).ready(function () {
+                                    $(document).on('click', '.telcoGroup .telcoClass', function () {
+                                        $(this).siblings('.telcoClass').removeClass('selectClass');//  移除同类状态标示
+                                        $(this).addClass('selectClass');
+                                        $('#submitButton').attr('data', $(this).val());// 设置值
+                                    });
+
+                                    // 保存状态
+                                    $('#submitButton').click(function () {
+                                        //console.log(11111);
+                                        var msisdn = $('#msisdn').val();
+                                        var password = $('#password').val();
+                                        var telco = $(this).attr('data');
+                                        if(typeof(telco)=="undefined" || telco.length < 1){
+                                            $('.telcoGroup').after('<p class="text-danger">Please select mobile operators</p>');
+                                            setTimeout(function(){
+                                                $('.telcoGroup').next().remove();
+                                            }, 3000);
+                                            return false;
+                                        }
+                                        $.post("/sub/settelco", {"msisdn": msisdn,"password":password,"telco":telco},
+                                            function (data) {
+                                                if(data.status == 200){
+                                                    var tip  = data.content;
+                                                    $.myalert({
+                                                        width: "50%",
+                                                        content: '<b>'+tip+'</b>',
+                                                        confirm_btn_click: function (e) { //确认按钮点击事件
+                                                            $.myalert("getDialog").mydialog("hide");                                                           
+                                                            //跳转首页
+                                                            window.location.href='/';
+                                                        }
+                                                    });
+                                                    // 关闭弹窗
+                                                    $('#small-dialog').find('.mfp-close').trigger('click');
+                                                }else if(data.status == 401){
+                                                    $('#password').after('<p class="text-danger">'+data.content+'</p>');
+                                                    setTimeout(function(){
+                                                        $('#password').next().remove();
+                                                    }, 3000);
+                                                    return false;
+                                                }
+                                                console.log(data); //  2pm
+                                            }, "json");
+
+                                        
+                                    });
+                                });
+                            </script>
                             <div class="forgot">
                                 <a href="#">Forgot password ?</a>
                             </div>

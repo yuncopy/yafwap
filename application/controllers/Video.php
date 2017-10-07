@@ -81,7 +81,7 @@ class VideoController extends AbstractController {
        }
     }
     
-    // 客服热血
+    // 客服热线
     public function serviceAction(){
         //Yaf_Dispatcher::getInstance()->autoRender(false); //关闭视图渲染 
         //$this->display('video/service');
@@ -106,9 +106,10 @@ class VideoController extends AbstractController {
            $cid = $this->input->get('c');
            $cont = $contents->saveGetContent(['cid'=>$cid]);
            $this->assign(array('use'=>$cont['text']));
-       }
-        
+       }  
     }
+    
+    
     
     
     

@@ -31,15 +31,31 @@ class SubscribeModel extends BlueModel
     }
     
     //检查MT用户
-    public function loginMt($site,$teclo,$msisdn){
-        if($site && $teclo && $msisdn){
+    public function loginMt($site,$telco,$msisdn){
+        if($site && $telco && $msisdn){
             $svid = new SvidModel();
-            $svids_data = $svid->getSvids($site,$teclo);
+            $svids_data = $svid->getSvids($site,$telco);
             $svids = array_column($svids_data, 'svid');
-            $table = $this->table_user[$teclo];
+            $table = $this->table_user[$telco];
             $t_svids = $this->get($table,"*",['status'=>'A','svid'=>$svids,'msisdn'=>$msisdn]);
             return !empty($t_svids) ? $t_svids : false;
         }
+    }
+    
+    // 验证登录是否成功
+    public function userLogin($site,$msisdn,$password,$telco){
+        if($msisdn && $password && $telco){
+            $svid = new SvidModel();
+            $svids_data = $svid->getSvids($site,$telco);
+            $svids = array_column($svids_data, 'svid');// 获取SVID信息
+            $table = $this->table_user[$telco];
+            $t_svids = $this->get($table,"*",['status'=>'A','svid'=>$svids,'msisdn'=>$msisdn]);// 获取业务信息
+            $message_id = $t_svids['message_id'];
+            if($message_id == $password){
+                return true;
+            }
+        }
+        return false;
     }
     
 }
