@@ -116,3 +116,34 @@
     <?php }}?>
 </div>
 <?php $this->display('layouts/footer.phtml');?>
+<script src="/assets/js/jquery.history.js"></script>
+<script>
+    // 订阅失败,提示
+    $(document).ready(function () {
+        var status = GetQueryString('status');
+        if(typeof(status) !="undefined" && status != null){
+            mAlert(status,statusMsg[status]);
+        }
+    }); 
+   //绑定beforeunload事件, jquery离开页面弹出提示代码  http://www.w3cmark.com/2014/280.html
+    $(window).bind('beforeunload',function(){
+        //return '您输入的内容尚未保存，确定离开此页面吗？';
+    });
+    //解除绑定，一般放在提交触发事件中
+    //$(window).unbind('beforeunload');
+    // 定义提示使用
+    function mAlert(status,statusMsg){
+        $.myalert({
+            width: "50%",
+            title: "Notice",
+            confirm_btn_title: "confirm",
+            content: '<b>'+statusMsg+'</b>',
+            confirm_btn_click: function (e) { //确认按钮点击事件
+                $.myalert("getDialog").mydialog("hide");
+                (function(window,undefined){
+                    History.pushState({state:status}, statusMsg, "?state="+status);  
+                })(window);
+            }
+        });
+    }
+</script>

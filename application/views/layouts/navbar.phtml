@@ -30,12 +30,9 @@
 
                 <div class="signin">
                     <!--探测到手机号，直接直接订阅按钮-->
-                    <?php if (netType() == '3G') { ?>
-
-                        <a class="play-icon" href="<?php echo videViettel(); ?>" role="button">Gói ngày (3.000đ/ngày)</a>  <!--按天-->
-                        <a class="play-icon" href="<?php echo videViettel(); ?>" role="button">Gói tuần (7.000đ/tuần)</a> <!--按周-->
-
-                    <?php } ?>
+                    <?php if (netType() == '3G') { foreach (videoViettel() as $val){ ?>
+                        <a class="play-icon" href="<?php echo $val[0]; ?>" role="button"><?php echo $val[1];?></a>
+                    <?php }} ?>
 
                     <!--右上角 登录直接取消-->
                     <!--a href="#small-dialog2" class="play-icon popup-with-zoom-anim">Sign Up</a-->

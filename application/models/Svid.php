@@ -21,5 +21,15 @@ class SvidModel extends BlueModel
         return self::$svids;
     }
     
+    //获取SVID
+    public function getSvidInfo($svid){
+        if($svid){
+            $svidInfo = $this->get($this->table, "*", [
+                "svid" => $svid
+            ]);
+            return $svidInfo;
+        }
+    }
+    
 }
 

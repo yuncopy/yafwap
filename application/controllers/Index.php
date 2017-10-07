@@ -11,12 +11,13 @@ class IndexController extends AbstractController {
     //入口
     protected $category = [ 11,12,5 ];
     protected  $server_video = 'http://vas.vietteltelecom.vn/MPS/';
-    private $demo = false;  // 模拟测试  http://125.212.233.65:41801/index/index?svid=vnd998  测试地址
+    private $demo = true;  // 模拟测试  http://125.212.233.65:41801/index/index?svid=vnd998  测试地址
     
     public function indexAction(){
         //dd(getTelco());
         $telcoName_Arr = self::$telco_arr;
         $telcoName = $telcoName_Arr['operator'];
+        //dd($telcoName_Arr);
         if($telcoName_Arr['status']== 200){  // 成功探测到运营商
             netType('3G');  // 设置网络方式
             switch ($telcoName){
@@ -25,15 +26,14 @@ class IndexController extends AbstractController {
                         $svid = $this->input->get('svid','');
                         $sessionid = $this->input->get('sessionid','');
                         //microtime_float(4);
-                        $data_encrypt = $this->aes_encrypt_encrypt_video($data,$svid,$sessionid); //探测手机号
+                        $data_encrypt = $this->aes_encrypt_decrypt_video($data,$svid,$sessionid); //探测手机号
+                        //dd($data_encrypt);
                         $josn_to_data = json_decode($data_encrypt,true);
                         Log_Log::info(__METHOD__.' viettel init msisdn :' . $data_encrypt, true, true);  // 记录日志
                         //microtime_float(5);
                         if($josn_to_data['status']== 201){  // 加密跳转
                             $redirect_viettel  = $josn_to_data['redirect'];
-                            if(!getmsisdn()){  // 探测手机号
-                                jump($redirect_viettel);// 执行跳转
-                            }
+                            jump($redirect_viettel);// 执行跳转
                             //microtime_float(6);
                         }else if($josn_to_data['status']== 200){  // 解密获取参数
                             //microtime_float(7);
@@ -72,28 +72,29 @@ class IndexController extends AbstractController {
                                     $this->session->set($GetMsisdn,$msisdn);
                                 break;
                                 
-                                case 'REGISTER':  // 订阅成功  
-                                    $GetMsisdn = $josn_to_data['MOBILE'];
-                                    $this->session->set($GetMsisdn,$msisdn);
-                                    // 订阅记录数据库
-                                    saveLog('REGISTER',$josn_to_data);
-                                    if($this->loginMsisdn()){
-                                        $key_http_referer = 'HTTP_REFERER_SUB';
-                                        $REQUEST_URI = $this->session->getFlash($key_http_referer);
-                                        jump($REQUEST_URI);// 执行跳转,订阅成功后回调预览的页面
-                                    }
-                                    break;
+                                case 'REGISTER':  // 订阅成功
+                                    if (($RES == 0) || ($RES == 408)){
+                                        $GetMsisdn = $josn_to_data['MOBILE'];
+                                        $this->session->set($GetMsisdn,$msisdn);
+                                        // 订阅记录数据库
+                                        saveLog('REGISTER',$josn_to_data);
+                                        if($this->loginMsisdn()){
+                                            $key_http_referer = 'HTTP_REFERER_SUB';
+                                            $REQUEST_URI = $this->session->getFlash($key_http_referer);
+                                            jump($REQUEST_URI);// 执行跳转,订阅成功后回调预览的页面
+                                        }
+                                    }else{  // 订阅失败
+                                        jump('/index/index?status=400');
+                                    } 
+                                break;
                                 case 'CANCEL':  // 取消订阅
-                                    
                                     $cancel_array = array('411','412','0','414');
                                     if(in_array($RES, $cancel_array)){
-                                        // 退订成功
-                                        
+                                        jump('/index/index?status=201'); // 退订成功
                                     }else{
-                                        // 退订失败
+                                        jump('/index/index?status=401');// 退订失败
                                     }
-                                    
-                                    break;
+                                break;
                             }
                         }
                     break;
@@ -101,7 +102,27 @@ class IndexController extends AbstractController {
                     
                     break;
                 case 'mobifone':
-                    
+                    // 探测手机号  /index/index?svid=vnd4&sessionid=2354
+                    //探测手机号结果回调后携带的参数
+                    $data = $this->getRequest()->getQuery("data", false);  //$this->input->get('DATA',false);  会过滤特殊字符，不能使用
+                    $signature = $this->getRequest()->getQuery("signature", false);  //$this->input->get('DATA',false);  会过滤特殊字符，不能使用
+                    $svid = $this->input->get('svid','');
+                    $sessionid = $this->input->get('sessionid','');
+                    $encrypt_data = $this->mobifone_encrypt_decrypt($data,$signature,$svid,$sessionid);
+                    $josn_to_data = json_decode($encrypt_data,true);
+                    Log_Log::info(__METHOD__.' viettel init msisdn :' . $encrypt_data, true, true);  // 记录日志
+                    if($josn_to_data['status']== 201){  // 加密跳转
+                        $redirect_mobifone  = $josn_to_data['redirect'];
+                        jump($redirect_mobifone);// 执行跳转
+                    }else if($josn_to_data['status']== 200){  // 解密获取参数
+                        //dd($josn_to_data);
+                        $GetMsisdn = systemConfig('GetMsisdn');
+                        $UserSub = systemConfig('UserSub');
+                        $msisdn = trim($josn_to_data['mobile']) != 'getmobileerror' ? intval($josn_to_data['mobile']) : ''; 
+                        $josn_to_data['mobile'] = $msisdn;
+                        $this->session->set($UserSub,$josn_to_data);  // 设置整体缓存信息 
+                        $this->session->set($GetMsisdn,$msisdn);  // 获取手机号
+                    }
                     break;
             }
             
@@ -177,7 +198,7 @@ class IndexController extends AbstractController {
     /**
     AES 加密  256位   视频业务加密、解密
     */
-    public function aes_encrypt_encrypt_video($data=null,$svid='',$sessionid=''){
+    public function aes_encrypt_decrypt_video($data=null,$svid='',$sessionid=''){
         $z = secretConfig('key');
         $pub_key = secretConfig('pub_key');
         $pri_key_cp = secretConfig('pri_key_cp');
@@ -235,7 +256,67 @@ class IndexController extends AbstractController {
         Yaf_Dispatcher::getInstance()->autoRender(FALSE);  // 关闭自动加载模板
     }
     
-  
+    
+    // mobifone 加密解密
+    public function mobifone_encrypt_decrypt($data,$signature,$svid,$sessionid){
+        
+        $obj = new Util_Encryption(); //实例化加密类
+        if($data == false){
+            $num = '1234567890';
+            //必要参数
+            $cpCode = secretConfig('mobifone_cpCode');
+            $key    = secretConfig('mobifone_key');
+
+            if($svid) $svid = $svid.'@';
+            if($sessionid) $sessionid = '#'.$sessionid;
+            $cpreqid = $svid.str_shuffle('123456').$sessionid;
+            
+            $server =$this->getRequest()->getServer();
+            $http_type = ((isset($server['HTTPS']) && $server['HTTPS'] == 'on') || (isset($server['HTTP_X_FORWARDED_PROTO']) && $server['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
+            $callback = $http_type.$server['HTTP_HOST'].'/index/index'; // 路由地址
+            $cprequestid =  $cpreqid;   //加密串
+            $returnback = $callback; 	//结果回调地址使用当前地址URL  http://baidu.com  http://125.212.233.65:41801/index/index
+            $patameter = 'cprequestid='.$cprequestid.'&returnback='.$returnback;
+            $encryRes = $obj->encode($patameter);
+
+            //请求加密的数据
+            $dataStr = 'data='.$encryRes.'&key='.$key;
+            $dataStrEncrypt = $obj->encryptData($dataStr);
+
+            //生成签名
+            $signature = $obj->createSignature($dataStrEncrypt);
+
+            //请求地址
+            $url = "http://m.mgame.vn/paymentgw/index.php?r=pDefault/index&cpid={$cpCode}&cmd=DETECTION&data={$dataStrEncrypt}&signature=".$signature;
+            $data_encrypt['status'] = 201;
+            $data_encrypt['redirect'] = $url;
+            //dd($data_encrypt);
+            return json_encode($data_encrypt);  // 获取跳转链接
+        }else{
+            // 解密
+            $result = $obj->decrypData($data,$signature);
+            if($result){
+                //返回数据
+                $array = explode('&',$result);
+                $num = count($array);
+                if($num > 0){
+                    foreach($array as $k=>$v){
+                        $res = explode('=',$v);
+                        $value = !empty($res[1])? $res[1]: '';
+                        $dataArr[$res[0]] = $value;
+                    }
+                }
+            }
+            $dataArr['status'] = 200;
+            return json_encode($dataArr);
+        }
+        
+		
+    }
+
+
+
+
     public function infoAction(){
         session_start();
         dd($_SESSION);

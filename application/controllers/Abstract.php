@@ -30,7 +30,7 @@ abstract class AbstractController extends Yaf_Controller_Abstract
         $this->input = self::$static_input;
         if(self::$static_session == null) {
             $cookie = new Cookie;  //http://php.net/manual/en/function.session-set-cookie-params.php
-            $lifetime = 3600;  // 秒
+            $lifetime = 600;  // 秒为单位
             self::$static_session = new SessionInstance("wap_",$cookie->withLifetime($lifetime));  // 初始化
             Yaf_Registry::set('session',self::$static_session);
         };
@@ -61,7 +61,7 @@ abstract class AbstractController extends Yaf_Controller_Abstract
 
     //获取运营商
     public function getTelco(){
-        if(empty(self::$telco_arr)){
+        if(self::$telco_arr == null){
             $network = new Util_Network();
             $telcoName_Arr = array();
             if(getTelco()) $telcoName_Arr = getTelco();
@@ -69,6 +69,7 @@ abstract class AbstractController extends Yaf_Controller_Abstract
                 $telcoName_Arr = $network -> getTelcoName();  // 获取运营商
                 getTelco($telcoName_Arr);
             }
+            //dd(getTelco());
             Log_Log::info(__METHOD__.' content init network:' . json_encode($telcoName_Arr), true, true);  // 记录日志
             self::$telco_arr = $telcoName_Arr;
         }

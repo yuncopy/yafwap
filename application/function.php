@@ -348,7 +348,7 @@ if (!function_exists('videViettel')) {
      * 获取订阅地址
      */
 
-    function videViettel() {
+    function videoViettel() {
         $UserSub = systemConfig('UserSub');
         $session = Yaf_Registry::get('session'); // 获取SESSIO对象
         $UserContent = $session->get($UserSub);
@@ -357,13 +357,21 @@ if (!function_exists('videViettel')) {
             $sessionid = ltrim(strstr ( $REQ ,  '#' ),'#');
             $svid = strstr($REQ, '@', TRUE);
             $msisdn = $UserContent['MOBILE'];
-            $params = array(
-                'sessionid'=>$sessionid,
-                'svid'=>$svid,
-                'msisdn'=>$msisdn
-            );
-            $route = '/sub/index?'.http_build_query($params);
-            return $route;
+            // 默认SVID
+            $array_svid = array('1'=>'vnd42', '7'=>'vnd43'); // 按天  // 按周
+            $array_svid_text = array( '1'=>'Gói ngày (3.000đ/ngày)','7'=>'Gói tuần (7.000đ/tuần)');  // 文本说明
+            if($svid){  // 更新数组值
+                $svidModel = new SvidModel();
+                $svid_info = $svidModel->getSvidInfo($svid); //查询数据库
+                $array_svid[$svid_info['service']] = $svid_info['svid'];
+            }
+            $svid_url = array();
+            foreach ($array_svid as $kk => $val){
+                $params = array('sessionid'=>$sessionid,'svid'=>$val, 'msisdn'=>$msisdn);
+                $route = '/sub/index?'.http_build_query($params);
+                $svid_url[] = [$route,$array_svid_text[$kk]];
+            }
+            return $svid_url;
         }
     }
 

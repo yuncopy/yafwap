@@ -95,6 +95,10 @@ X1XfDILN1YCI6etn6OlM/rSlEvFwCnXghgPB2b+QEow4w8whSXT/hjK5k+rzTlwx
 EOD',
     
     
+    //mobifone 
+    'mobifone_key'=>'abcdef0123456789abcdef0123456789',//加密解密使用的KEY
+    'mobifone_cpCode'=>'059',//运营商申请的cpCode
+    
 ];
 
 
