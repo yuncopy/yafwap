@@ -343,23 +343,58 @@ if (!function_exists('getTelco')) {
 
 
 
-if (!function_exists('videViettel')) {
+if (!function_exists('videoURL')) {
     /*
      * 获取订阅地址
      */
 
-    function videoViettel() {
+    function videoURL() {
         $UserSub = systemConfig('UserSub');
         $session = Yaf_Registry::get('session'); // 获取SESSIO对象
         $UserContent = $session->get($UserSub);
         if($UserContent){
-            $REQ = $UserContent['REQ'];
-            $sessionid = ltrim(strstr ( $REQ ,  '#' ),'#');
-            $svid = strstr($REQ, '@', TRUE);
-            $msisdn = $UserContent['MOBILE'];
-            // 默认SVID
-            $array_svid = array('1'=>'vnd42', '7'=>'vnd43'); // 按天  // 按周
-            $array_svid_text = array( '1'=>'Gói ngày (3.000đ/ngày)','7'=>'Gói tuần (7.000đ/tuần)');  // 文本说明
+            $svid = '';
+            //viettel
+            $Telco_array = getTelco();
+            $operator = $Telco_array['operator'];
+            switch ($operator){
+                case 'viettel':
+                    $REQ = $UserContent['REQ'];
+                    $sessionid = ltrim(strstr ( $REQ ,  '#' ),'#');
+                    $svid = strstr($REQ, '@', TRUE);
+                    $msisdn = $UserContent['MOBILE'];
+                    // 默认SVID
+                    $array_svid = array('1'=>'vnd42', '7'=>'vnd43'); // 按天  // 按周
+                    $array_svid_text = array( '1'=>'Gói ngày (3.000đ/ngày)','7'=>'Gói tuần (7.000đ/tuần)');  // 文本说明
+                    
+                    // 订阅路由
+                    $subscribe_route = '/sub/index';
+                break;
+                case 'vinaphone':
+                    $requestid = isset($UserContent['requestid']) ? $UserContent['requestid'] : '';
+                    $sessionid ='';
+                    if($requestid){
+                        $sessionid = ltrim(strstr ( $requestid ,  '#' ),'#');
+                        $svid = strstr($requestid, '@', TRUE);
+                    }
+                    $msisdn = $UserContent['msisdn'];
+                    // 默认SVID
+                    $array_svid = array('1'=>'vnd17', '7'=>'vnd20','30'=>'vnd21'); // 按天  // 按周
+                    $array_svid_text = array( '1'=>'3000VNĐ/Ngày','7'=>'15000VNĐ/Tuần','30'=>'30000VNĐ/Tháng');  // 文本说明
+                    $subscribe_route = '/sub/vb';
+                break;
+                case 'mobifone':
+                    $cprequestid = $UserContent['cprequestid'];
+                    $sessionid = ltrim(strstr ( $cprequestid ,  '#' ),'#');
+                    $svid = strstr($cprequestid, '@', TRUE);
+                    $msisdn = $UserContent['mobile'];
+                    // 默认SVID
+                    $array_svid = array('1'=>'vnd3', '7'=>'vnd4'); // 按天  // 按周
+                    $array_svid_text = array( '1'=>'Gói ngày (2000d/ngày)','7'=>'Gói tuần (10000d/tuần)');  // 文本说明
+                    $subscribe_route = '/sub/mb';
+                break;
+            }
+            
             if($svid){  // 更新数组值
                 $svidModel = new SvidModel();
                 $svid_info = $svidModel->getSvidInfo($svid); //查询数据库
@@ -368,7 +403,7 @@ if (!function_exists('videViettel')) {
             $svid_url = array();
             foreach ($array_svid as $kk => $val){
                 $params = array('sessionid'=>$sessionid,'svid'=>$val, 'msisdn'=>$msisdn);
-                $route = '/sub/index?'.http_build_query($params);
+                $route = $subscribe_route.'?'.http_build_query($params);
                 $svid_url[] = [$route,$array_svid_text[$kk]];
             }
             return $svid_url;

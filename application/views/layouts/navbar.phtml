@@ -27,13 +27,21 @@
                 </div-->
 
 
-
                 <div class="signin">
                     <!--探测到手机号，直接直接订阅按钮-->
-                    <?php if (netType() == '3G') { foreach (videoViettel() as $val){ ?>
-                        <a class="play-icon" href="<?php echo $val[0]; ?>" role="button"><?php echo $val[1];?></a>
+                    <style>
+                    @media screen and (max-width: 480px){
+                        .signin a.play-icons{
+                            width: 95%;
+                            display: inline-block;
+                            margin-bottom: 2px;
+                            text-align: center;
+                        }
+                    }
+                    </style>
+                    <?php if (netType() == '3G') { foreach (videoURL() as $val){ ?>
+                        <a class="play-icon play-icons" href="<?php echo $val[0]; ?>" role="button"><?php echo $val[1];?></a>
                     <?php }} ?>
-
                     <!--右上角 登录直接取消-->
                     <!--a href="#small-dialog2" class="play-icon popup-with-zoom-anim">Sign Up</a-->
                     <!-- pop-up-box -->
@@ -192,12 +200,31 @@
                     <?php } ?>
                     <div id="small-dialog" class="mfp-hide">
                         <h3>Login</h3>
+                        <!--viettel-->
+                        <?php 
+                            $Telco_array = getTelco();
+                            $operator = $Telco_array['operator'];
+                            if($operator =='viettel'){ 
+                        ?>
                         <div class="social-sits">
                             <p><b>số điện thoại/mật khẩu để đăng nhập. Nếu Quý khách quên mật khẩu, soạn MK gửi 5598.</b></p>
                             <p class="play-icon popup-with-zoom-anim">- Nếu Quý khách chưa đăng ký dịch vụ, hãy soạn:</p>
                             <p class="play-icon popup-with-zoom-anim">+ Gói ngày DK1 gửi 5598 (3.000đ/ngày, gia hạn hàng ngày)</p>
                             <p class="play-icon popup-with-zoom-anim">+ Gói ngày DK7 gửi 5598 (7.000đ/tuần, gia hạn hàng tuần)</p>
                         </div>
+                        <?php }else if($operator =='vinaphone'){?>
+                        
+                        <?php }else if($operator =='mobifone'){?>
+                        <!--mobifone-->
+                         <div class="social-sits">
+                            <p><b> Hệ thống không nhận diện được thuê bao quý khách, nếu quý khách đã đăng ký dịch vụ vui lòng đăng nhập với tài khoản và mật khẩu .</b></p>
+                            <p class="play-icon popup-with-zoom-anim">- Nếu quên mật khẩu soạn PW gửi 9210 Nếu quý khách chưa đăng ký sử dụng dịch vụ: </p>
+                            <p class="play-icon popup-with-zoom-anim">+ Vui lòng sử dụng 3G/GPRS để đăng ký hoặc soạn tin nhắn theo cú pháp:</p>
+                            <p class="play-icon popup-with-zoom-anim">+ DK BD gửi 9210 để tải game ngày (2000d/ngày)</p>
+                            <p class="play-icon popup-with-zoom-anim">+ DK BW gửi 9210 để tải game tuần (10000d/tuần)</p>
+                            <p class="play-icon popup-with-zoom-anim">+ Hoặc sử dụng GPRS/3G để tải game </p>
+                        </div>
+                        <?php }?>
                         <style>
                             .telcoGroup{
                                 margin-bottom: 10px;
@@ -223,9 +250,9 @@
                         <div class="signup">
                             <form class="form-horizontal" onsubmit="return false;">                            
                                 <div class="btn-group telcoGroup" role="group" >
-                                    <button type="button" class="btn btn-default telcoClass radiusLeftClass" value="viettel">viettel</button>
-                                    <button type="button" class="btn btn-default telcoClass" value="vinaphone">vinaphone</button>
-                                    <button type="button" class="btn btn-default telcoClass radiusRightClass" value="mobifone">mobifone</button>
+                                    <button type="button" class="btn btn-default telcoClass radiusLeftClass <?php echo $operator=='viettel'? 'selectClass':''; ?>" value="viettel">viettel</button>
+                                    <button type="button" class="btn btn-default telcoClass <?php echo $operator=='vinaphone'? 'selectClass':''; ?>" value="vinaphone">vinaphone</button>
+                                    <button type="button" class="btn btn-default telcoClass radiusRightClass <?php echo $operator=='mobifone'? 'selectClass':''; ?>" value="mobifone">mobifone</button>
                                 </div>
 
                                 <input type="text" id="msisdn" name="msisdn" class="email" placeholder="Enter mobile" required="required" pattern="^[0-9]{6,16}$"/>

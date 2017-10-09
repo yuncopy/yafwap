@@ -99,6 +99,19 @@ class IndexController extends AbstractController {
                         }
                     break;
                 case 'vinaphone':
+                    $data = $this->vinaphone_phone();
+                    $svid = $this->input->get('svid','');
+                    $sessionid = $this->input->get('sessionid','');
+                    if($svid){
+                        $data['requestid'] = $svid.'@'.date('YmdHis').'#'.$sessionid;
+                    }
+                    $msisdn = $data['msisdn'];
+                    if(!$msisdn) netType("3G"); // 设置网络方式  3G WIFI
+                    $data['msisdn'] = $msisdn;
+                    $GetMsisdn = systemConfig('GetMsisdn');
+                    $UserSub = systemConfig('UserSub');
+                    $this->session->set($UserSub,$data);  // 设置整体缓存信息 
+                    $this->session->set($GetMsisdn,$msisdn);  // 获取手机号
                     
                     break;
                 case 'mobifone':
@@ -119,6 +132,7 @@ class IndexController extends AbstractController {
                         $GetMsisdn = systemConfig('GetMsisdn');
                         $UserSub = systemConfig('UserSub');
                         $msisdn = trim($josn_to_data['mobile']) != 'getmobileerror' ? intval($josn_to_data['mobile']) : ''; 
+                        if(!$msisdn) netType("WIFI"); // 设置网络方式  3G WIFI
                         $josn_to_data['mobile'] = $msisdn;
                         $this->session->set($UserSub,$josn_to_data);  // 设置整体缓存信息 
                         $this->session->set($GetMsisdn,$msisdn);  // 获取手机号
@@ -163,7 +177,6 @@ class IndexController extends AbstractController {
         }
     }
 
-    
 
     // 分类
     public function categoryContent($category,$p,$c,$n){
@@ -189,9 +202,22 @@ class IndexController extends AbstractController {
     
     //观看视频
     public function  showAction(){
-        
-        
-        
+        $post =  $this->getRequest()->isPost();
+        $id_file = $this->input->get('vfs',false);
+        $_contents = new ContentsModel();
+        $id = $this->input->get('id');
+        $row = $_contents->getRow($id);
+        if($post){ // html5
+            echo trim($row['seeds']).'->video/mp4'; return false;
+        }else if($id_file){  // flash
+            $row = $_contents->getRow($id_file);
+            echo trim($row['seeds']); return false;
+        }else{
+            //随机
+            $contents = $_contents->getRand(10,$this->category);
+            $this->assign(array('contents'=>$contents));
+            $this->assign(array('row'=>$row));
+        }
     }
 
     //请求探测手机号加密数据
@@ -257,9 +283,34 @@ class IndexController extends AbstractController {
     }
     
     
+    //获取手机号
+    public function vinaphone_phone(){
+        $server = $this->getRequest()->getServer(); //$_SERVER 
+        function nginx_request_headers($server) { 
+            foreach($server as $key=>$value) { 
+                if (substr($key,0,5)=="HTTP_") {
+                    $out[$key]=$value; 
+                } 
+            } 
+            return $out; 
+	}
+        $headerInfo = nginx_request_headers($server);
+        $msisdn 	= isset($headerInfo['HTTP_MSISDN']) ? trim($headerInfo['HTTP_MSISDN']) : '';
+        $xipaddress = isset($headerInfo['HTTP_X_IPADDRESS']) ? trim($headerInfo['HTTP_X_IPADDRESS']):''; 
+
+        $jsondata =array(
+            "ip"=> $xipaddress,"msisdn"=> $msisdn
+        );
+        Log_Log::info(__METHOD__.' content init mobifone reg:' . json_encode($jsondata), true, true);  // 记录日志
+        return $jsondata;
+    }
+
+    
+
     // mobifone 加密解密
     public function mobifone_encrypt_decrypt($data,$signature,$svid,$sessionid){
         
+        //  http://125.212.233.65:41801/index/index?svid=vnd3&sessionid=22222
         $obj = new Util_Encryption(); //实例化加密类
         if($data == false){
             $num = '1234567890';
@@ -309,9 +360,7 @@ class IndexController extends AbstractController {
             }
             $dataArr['status'] = 200;
             return json_encode($dataArr);
-        }
-        
-		
+        }	
     }
 
 

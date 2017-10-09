@@ -12,7 +12,7 @@ class ContentsModel extends BlueModel
     protected $write_mode = true;  // 使用读写数据库
     static public $data = null;
     static public $third = null;  // 热度前三名
-    protected $filed_name = ["id","cid","thumb","title","authorid","text","click","time_length"];
+    protected $filed_name = ["id","cid","thumb","title","authorid","text","click","time_length","seeds","created_at"];
 
 
     // 效率很低
@@ -26,6 +26,30 @@ class ContentsModel extends BlueModel
         return self::$data;
     }
     
+    //随机取出数据
+    public function getRand($num =10,$cid){
+        if($cid){
+            $table = $this->table;
+            $max = $this->max($table,"id",['cid'=>$cid]);
+            $min = $this->min($table,"id",['cid'=>$cid]);
+            $arr=array();
+            while(count($arr) < $num){
+                $arr[]=rand($min,$max);
+                $arr=array_unique($arr);
+            }
+            $data= $this->select($table, $this->filed_name,[
+                "id"=>$arr
+            ]);
+            return $data;
+        }
+    }
+    
+    // 取出一条数据
+    public function getRow($id){
+        return $this->get($this->table,$this->filed_name, ['id'=>$id]);
+    }
+
+
     //获取所有内容 （效率比较低）
     public function getContents($cid = null){
         

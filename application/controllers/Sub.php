@@ -11,7 +11,7 @@ class SubController extends AbstractController {
     public  $server = 'http://vas.vietteltelecom.vn/MPS/';
     private $pwd_prefix = 'wap_';
 
-
+    // 订阅地址 viettel
     public function indexAction(){
         $svid = $this->input->get('svid',false);
         $sessionid = $this->input->get('sessionid',false);
@@ -31,12 +31,140 @@ class SubController extends AbstractController {
                 jump($charge_url);// 执行跳转
             }
         }else{
-            die(json_encode(array('status'=>404,'content'=>'parameter error'))); 
+            die(json_encode(array('status'=>404,'content'=>'svid parameter error'))); 
         }
         return false;
     }
     
-    // 获取URL
+    
+    // mobifone 订阅地址
+    public function mbAction(){
+        $svid = $this->input->get('svid',false);
+        $sessionid = $this->input->get('sessionid',false);
+        $msisdn = $this->input->get('msisdn',false);
+        if($svid){
+            if($msisdn){
+                $_subscribe = new SubscribeModel();
+                $subscribe =  $_subscribe->checkSvid($svid);  // 获取订阅信息
+                if($subscribe){
+                    $charge_url = $this->getMbReg($subscribe,$msisdn,$sessionid);
+                    jump($charge_url);// 执行跳转
+                }else
+                    die(json_encode(array('status'=>404,'content'=>'svid parameter error'))); 
+            }else
+                die(json_encode(array('status'=>404,'content'=>'msisdn parameter error')));  
+        }else
+            die(json_encode(array('status'=>404,'content'=>'svid parameter error'))); 
+        return false;
+    }
+    
+    
+    public function vbAction(){
+        $svid = $this->input->get('svid',false);
+        $sessionid = $this->input->get('sessionid',false);
+        $msisdn = $this->input->get('msisdn',false);
+        if($svid){
+            $_subscribe = new SubscribeModel();
+            $subscribe =  $_subscribe->checkSvid($svid);  // 获取订阅信息
+            if($subscribe){
+                $charge_url = $this->getVbReg($subscribe,$msisdn,$sessionid);
+                jump($charge_url);// 执行跳转
+            }else
+                die(json_encode(array('status'=>404,'content'=>'svid parameter error'))); 
+        }else
+            die(json_encode(array('status'=>404,'content'=>'svid parameter error'))); 
+        return false;
+    }
+    
+    // 获取vinaphone
+    public function  getVbReg($subscribe,$msisdn,$sessionid=''){
+        
+        //$requestid = str_shuffle('123456789'); // 不得随意修改
+        if($subscribe['vnpcpid']){
+            $time = date('YmdHis');
+            if($sessionid){
+                $sessionid = '#'.$sessionid;
+            }
+            $res = $subscribe;
+            $svid = $subscribe['svid'];
+            $requestid = $svid.'@'.str_shuffle('12345').$msisdn.$sessionid; // 不得随意修改
+            //$path = 'http://dk.vinaphone.com.vn/reg.jsp?';
+            $path = 'http://dk1.vinaphone.com.vn/reg.jsp?';
+            $str = 'requestid='.$requestid;
+            $str .= '&returnurl='.$res['returnurl'];
+            $str .= '&backurl='.$res['backurl'];  //在数据库中配置回调地址
+            $str .= '&cp='.$res['vnpcpid'];
+            $str .= '&service='.$res['vnpservice'];
+            $str .= '&package='.$res['vnppackage'];
+            $str .= '&requestdatetime='.$time; //yyyymmddhhmmss 
+            $str .= '&channel=WAP'; //[web/wap/client]
+
+            $path .= $str; 
+            $securecode = md5($requestid.$res['returnurl'].$res['backurl'].$res['vnpcpid'].$res['vnpservice'].$res['vnppackage'].$time.'BLUEMOBILE@2016');
+            $path .= '&securecode='.$securecode;
+            
+            Log_Log::info(__METHOD__.' content init mobifone reg:' . $path, true, true);  // 记录日志
+        }
+        return isset($path) ? $path :false;
+    }
+
+
+
+
+    // 获取URL   mobifone
+    public function getMbReg($subscribe,$msisdn,$sessionid=''){
+        if($msisdn){
+            //print_r($res);exit;
+            $subserviceid 	= trim($subscribe['short_key']); //42 (daily package)	43 (weekly package)
+            $content 		= trim($subscribe['short_name']);
+            $price 			= trim($subscribe['price']);
+
+            //$itemname = ''; //此参数为空，url中直接拼接
+            //$categoryname = 'g';//此参数为空，url中直接拼接
+            $subcpname = 'BL';//固定值
+            // cpcode
+            $cpCode = secretConfig('mobifone_cpCode');
+            $key    = secretConfig('mobifone_key');
+            //$cprequestid = !empty($cprequestid) ? $cprequestid : date('YmdHis').str_shuffle('123');//为自动获取手机号码的请求ID 便于查询
+            $svid = $subscribe['svid'];
+            if($svid) $svid = $svid.'@';
+            if($sessionid) $sessionid = '#'.$sessionid;
+            $cprequestid = $svid.date('YmdHis').str_shuffle('123456').$sessionid;
+            $mobile = trim($msisdn);
+            // $mobile = '84934478489';
+            // $mobile = '84934596177';
+
+            //去掉国家码或国家码84替换成0
+            if(substr($mobile,0,2) == '84'){
+                $mobile = str_replace('84','0',$mobile);
+            }else{
+                $mobile = substr($mobile,2);
+            }
+
+            //$patameterStr = "subserviceid=42&categoryname=&itemname=&subcpname=BL&content=bd&cprequestid=323160219102839787&mobile=84934478489&price=2000"; //测试案例
+            $patameterStr = "subserviceid={$subserviceid}&categoryname=&itemname=&subcpname={$subcpname}&content={$content}&cprequestid={$cprequestid}&mobile={$mobile}&price=".$price;
+            //echo $patameterStr;exit;
+            //加密过程
+            $obj = new Util_Encryption(); //实例化加密类
+            $encryRes = $obj->encode($patameterStr);
+            $dataStr = 'data='.$encryRes.'&key='.$key;
+
+            //加密后的数据
+            $data = $obj->encryptData($dataStr);
+
+            //签名字符串
+            $signature = $obj->createSignature($data);
+
+            $serviceid = $subserviceid;  //serviceid、subserviceid 两个参数是相同的
+            // 请求地址 
+            $url = "http://m.mgame.vn/paymentgw/index.php?r=pDefault/index&cpid={$cpCode}&cmd=REGISTER&serviceid={$serviceid}&data={$data}&signature=".$signature;
+            Log_Log::info(__METHOD__.' content init mobifone reg:' . $url, true, true);  // 记录日志
+        }
+        return isset($url) ? $url :false;
+    }
+    
+
+    // 获取URL   viettel
     public function  getReg($subscribe,$msisdn,$sessionid=''){
         
         if($msisdn){
@@ -83,8 +211,11 @@ class SubController extends AbstractController {
             
             // 跳转URL
             $url_charge = $this->server."charge.html?PRO=BLUEMOBILE&CMD=REGISTER&SER=FUNVIDEO&SUB=".$sub."&DATA=".urlencode( $data_encrypted).'&SIG='.$signature;
-       }
-       return isset($url_charge) ? $url_charge :false;
+            
+            Log_Log::info(__METHOD__.' content init viettel reg:' . $url_charge, true, true);  // 记录日志
+            
+        }
+        return isset($url_charge) ? $url_charge :false;
     }
     
     

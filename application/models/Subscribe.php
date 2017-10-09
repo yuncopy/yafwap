@@ -21,7 +21,7 @@ class SubscribeModel extends BlueModel
     public function checkSvid($svid){
         if($svid){
             $subscribe_info = $this->get( $this->table, [
-                "id","svid","short_code","short_key","price"
+                "id","svid","short_code","short_key","price","short_name","returnurl","backurl","vnpcpid","vnpservice","vnppackage"
             ], [
                 "svid" => $svid
             ]);
