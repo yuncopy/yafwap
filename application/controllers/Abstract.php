@@ -50,7 +50,7 @@ abstract class AbstractController extends Yaf_Controller_Abstract
         $this->assign(array('login'=>$login));
     }
     
-    // 检查用户是否成功登录
+    // 检查管理员是否成功登录
     public function appLogin(){
         $UserLogin = systemConfig('UserLogin');
         $applogin = $this->session->get($UserLogin);
@@ -115,11 +115,12 @@ abstract class AbstractController extends Yaf_Controller_Abstract
        $cache_menus = $this->session->get($key);
        $menus = unserialize($cache_menus);
        //$this->session->delete($key);
-       if(!$cache_menus){
+       if(!$menus){
             $_menus = new MenusModel();
             $menus = $_menus->menusList($this->site);
             $this->session->set($key, serialize($menus));
         }
+       
         if($list) return $menus;
         $menus_n = make_to_tree($menus);
         $this->assign(array('menus'=>$menus_n));
@@ -152,7 +153,7 @@ abstract class AbstractController extends Yaf_Controller_Abstract
             if($web_server['web_video_host'] == $host){
                 self::$static_site = 1;  // 视频站点
             }else if($web_server['web_game_host'] == $host){
-                self::$static_site = 2;  // ?游戏站点
+                self::$static_site = 2;  // 游戏站点
             }
        }
        return  self::$static_site;

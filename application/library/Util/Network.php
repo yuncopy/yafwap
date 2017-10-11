@@ -98,7 +98,7 @@ class Util_Network
     
     public function getTelcoName($ip_address=false){
         if(!$ip_address) $ip_address = $this->getIpAddress();   // 获取IP地址
-        $ip_address = '113.179.140.220';   // 测试代码
+        $ip_address = '116.109.172.123';   // 测试代码
         //$ip_address = '2001:cdba:0000:0000:0000:0000:3257:9652';  //测试代码
         /**ip=59.153.243.244&ipv=IPv4&operator=mobifone
          * ip=116.109.172.123&ipv=IPv4&operator=viettel

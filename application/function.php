@@ -398,7 +398,7 @@ if (!function_exists('videoURL')) {
             if($svid){  // 更新数组值
                 $svidModel = new SvidModel();
                 $svid_info = $svidModel->getSvidInfo($svid); //查询数据库
-                $array_svid[$svid_info['service']] = $svid_info['svid'];
+                if($svid_info) $array_svid[$svid_info['service']] = $svid_info['svid'];
             }
             $svid_url = array();
             foreach ($array_svid as $kk => $val){
@@ -423,6 +423,8 @@ if (!function_exists('getmsisdn')) {
         return !empty($msisdn) ? $msisdn : false;
     }
 }
+
+
 
 //添加日志
 if (!function_exists('saveLog')) {

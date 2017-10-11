@@ -48,7 +48,13 @@ class ContentsModel extends BlueModel
     public function getRow($id){
         return $this->get($this->table,$this->filed_name, ['id'=>$id]);
     }
-
+    
+    // 次数累加
+    public function addClick($id){
+        return $this->update($this->table, [
+            "click[+]" => 1
+        ],["id" => $id]);
+    }
 
     //获取所有内容 （效率比较低）
     public function getContents($cid = null){

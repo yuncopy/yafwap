@@ -19,7 +19,6 @@
                 </form>
             </div-->
 
-
             <div class="header-top-right">
 
                 <!--div class="file">
@@ -39,9 +38,16 @@
                         }
                     }
                     </style>
-                    <?php if (netType() == '3G') { foreach (videoURL() as $val){ ?>
-                        <a class="play-icon play-icons" href="<?php echo $val[0]; ?>" role="button"><?php echo $val[1];?></a>
-                    <?php }} ?>
+                    <?php if($login){?>  <!--登录MT-->
+                        <button type="button" class="btn btn-default" aria-label="Left Align">
+                            <span class="glyphicon glyphicon-blackboard" aria-hidden="true"> Hi:<?php echo getmsisdn();?></span>
+                        </button>
+                    <?php }else{?>
+                        <?php if (netType() == '3G') { foreach (videoURL() as $val){ ?>
+                           <a class="play-icon play-icons" href="<?php echo $val[0]; ?>" role="button"><?php echo $val[1];?></a>
+                        <?php }} ?>
+                    <?php }?>
+                   
                     <!--右上角 登录直接取消-->
                     <!--a href="#small-dialog2" class="play-icon popup-with-zoom-anim">Sign Up</a-->
                     <!-- pop-up-box -->

@@ -1,0 +1,7 @@
+
+//模版资源：
+https://w3layouts.com/games-zone-games-category-flat-bootstrap-responsive-web-template/
+//https://w3layouts.com/my-play-a-video-content-portal-flat-bootstrap-responsive-web-template/
+
+资源目录，使用软链接方式，建议资源目录不要放在项目目录中
+防止下载视频，需要配置nginx 配置

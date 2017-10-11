@@ -1,18 +1,19 @@
 <?php
 /**
- * @name IndexController
+ * @name GameqController
  * @author copy
  * @desc 默认控制器
  * @see http://www.php.net/manual/en/class.yaf-controller-abstract.php
  */
-class IndexController extends AbstractController {
+class GameqController extends AbstractController {
     
     
     //入口
     protected $category = [ 11,12,5 ];
     protected  $server_video = 'http://vas.vietteltelecom.vn/MPS/';
-    private $demo = false;  // 模拟测试  http://125.212.233.65:41801/index/index?svid=vnd998  测试地址
+    private $demo = true;  // 模拟测试  
     
+    // http://125.212.233.65:41802/gameq/index?svid=vnd999
     public function indexAction(){
         //dd(getTelco());
         $telcoName_Arr = self::$telco_arr;
@@ -99,44 +100,11 @@ class IndexController extends AbstractController {
                         }
                     break;
                 case 'vinaphone':
-                    $data = $this->vinaphone_phone();
-                    $svid = $this->input->get('svid','');
-                    $sessionid = $this->input->get('sessionid','');
-                    if($svid){
-                        $data['requestid'] = $svid.'@'.date('YmdHis').'#'.$sessionid;
-                    }
-                    $msisdn = $data['msisdn'];
-                    if(!$msisdn) netType("3G"); // 设置网络方式  3G WIFI
-                    $data['msisdn'] = $msisdn;
-                    $GetMsisdn = systemConfig('GetMsisdn');
-                    $UserSub = systemConfig('UserSub');
-                    $this->session->set($UserSub,$data);  // 设置整体缓存信息 
-                    $this->session->set($GetMsisdn,$msisdn);  // 获取手机号
-                    
+                     
+                    // TODO 
                     break;
                 case 'mobifone':
-                    // 探测手机号  /index/index?svid=vnd4&sessionid=2354
-                    //探测手机号结果回调后携带的参数
-                    $data = $this->getRequest()->getQuery("data", false);  //$this->input->get('DATA',false);  会过滤特殊字符，不能使用
-                    $signature = $this->getRequest()->getQuery("signature", false);  //$this->input->get('DATA',false);  会过滤特殊字符，不能使用
-                    $svid = $this->input->get('svid','');
-                    $sessionid = $this->input->get('sessionid','');
-                    $encrypt_data = $this->mobifone_encrypt_decrypt($data,$signature,$svid,$sessionid);
-                    $josn_to_data = json_decode($encrypt_data,true);
-                    Log_Log::info(__METHOD__.' viettel init msisdn :' . $encrypt_data, true, true);  // 记录日志
-                    if($josn_to_data['status']== 201){  // 加密跳转
-                        $redirect_mobifone  = $josn_to_data['redirect'];
-                        jump($redirect_mobifone);// 执行跳转
-                    }else if($josn_to_data['status']== 200){  // 解密获取参数
-                        //dd($josn_to_data);
-                        $GetMsisdn = systemConfig('GetMsisdn');
-                        $UserSub = systemConfig('UserSub');
-                        $msisdn = trim($josn_to_data['mobile']) != 'getmobileerror' ? intval($josn_to_data['mobile']) : ''; 
-                        if(!$msisdn) netType("WIFI"); // 设置网络方式  3G WIFI
-                        $josn_to_data['mobile'] = $msisdn;
-                        $this->session->set($UserSub,$josn_to_data);  // 设置整体缓存信息 
-                        $this->session->set($GetMsisdn,$msisdn);  // 获取手机号
-                    }
+                    // TODO
                     break;
             }
             
@@ -162,6 +130,9 @@ class IndexController extends AbstractController {
         
         
     }
+    
+    
+    
     
     // 检查用户是否已经MT
     private function  loginMsisdn(){
@@ -201,25 +172,8 @@ class IndexController extends AbstractController {
     }
     
     //观看视频
-    public function  showAction(){
-        $post =  $this->getRequest()->isPost();
-        $id_file = $this->input->get('vfs',false);
-        $_contents = new ContentsModel();
-        $id = $this->input->get('id');
-        
-        $row = $_contents->getRow($id);   //通过LINXU 防止下载和盗链
-        if($post){ // html5
-            echo trim($row['seeds']).'?token=1111->video/mp4'; return false;
-        }else if($id_file){  // flash
-            $row = $_contents->getRow($id_file);
-            echo trim($row['seeds']); return false;
-        }else{
-            //随机
-            $_contents->addClick($id); // 累加单击次数
-            $contents = $_contents->getRand(10,$this->category);
-            $this->assign(array('contents'=>$contents));
-            $this->assign(array('row'=>$row));
-        }
+    public function  singleAction(){
+       
     }
 
     //请求探测手机号加密数据

@@ -25,7 +25,7 @@
     <div class="col-sm-8 single-left">
         <div class="song">
             <div class="song-info">
-                <h3><?php echo $row['title']?></h3>	
+                <h3><?php echo $row['title'] ?></h3>	
             </div>
             <!---视频--->
             <div class="video-grid">
@@ -65,10 +65,10 @@
                 });
             </script>
             <div class="load_more">	
-                <ul id="myList">
+                <ul id="myList" thumb='<?php echo $row['thumb'];?>'>
                     <li>
-                        <h4>Published on <?php echo date('Y-m-d', strtotime($row['created_at']));?></h4>
-                        <p> <?php echo $row['text']?></p>
+                        <h4>Published on <?php echo date('Y-m-d', strtotime($row['created_at'])); ?></h4>
+                        <p> <?php echo $row['text'] ?></p>
                     </li>
                     <li>
                         <p>Nullam fringilla sagittis tortor ut rhoncus. Nam vel ultricies erat, vel sodales leo. Maecenas pellentesque, est suscipit laoreet tincidunt, ipsum tortor vestibulum leo, ac dignissim diam velit id tellus. Morbi luctus velit quis semper egestas. Nam condimentum sem eget ex iaculis bibendum. Nam tortor felis, commodo faucibus sollicitudin ac, luctus a turpis. Donec congue pretium nisl, sed fringilla tellus tempus in.</p>
@@ -200,7 +200,8 @@
         <h3>Up Next</h3>
         <div class="single-grid-right">
             <?php if ($contents) {
-                foreach ($contents as $key => $vv) { ?>
+                foreach ($contents as $key => $vv) {
+                    ?>
                     <div class="single-right-grids">
                         <div class="col-md-4 single-right-grid-left">
                             <a href="/index/show?id=<?php echo $vv['id']; ?>"><img src="<?php echo $vv['thumb']; ?>" alt="" /></a>
@@ -212,13 +213,93 @@
                         </div>
                         <div class="clearfix"> </div>
                     </div>
-    <?php }
-} ?>
+                <?php }
+            }
+            ?>
         </div>
     </div>
     <div class="clearfix"> </div>
 </div>
+
+<style>
+    div.payInfo {
+        width: 100%;
+        height: 320px;
+        background: #252625;
+        font-family: "Microsoft YaHei","微软雅黑","Microsoft JhengHei",MingLiu,Verdana, Arial, Helvetica, sans-serif;
+    }
+    div.payInfo p.info {
+        color: #CCC;
+        font-size: 24px;
+        text-indent: 0.5em;
+        display: block;
+        text-align: center;
+        padding-top: 80px;
+    }
+    div.payInfo p.title {
+        display: block;
+        font-size: 16px;
+        padding: 15px 0px 0px;
+        color: #C2C1C1;
+        text-align: center;
+    }
+    div.payInfo p.pay {
+        color: #f39800;
+        display: block;
+        font-size: 18px;
+        padding: 5px 0px 0px;
+        text-align: center;
+    }
+    
+    div.payInfo p.paybtn a.btn1, div.payInfo p.paybtn a.btn1:link, div.payInfo p.paybtn a.btn1:visited {
+        background-color: #327b10;
+        border: 1px solid #235c09;
+        border-radius: 5px;
+        color: #FFF;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 18px;
+        height: 48px;
+        line-height: 48px;
+        width: 30%;
+    }
+    div.payInfo p.paybtn a.btn2, div.payInfo p.paybtn a.btn2:link, div.payInfo p.paybtn a.btn2:visited {
+        background-color: transparent;
+        border: 1px solid #666;
+        color: #999;
+        height: 48px;
+        margin-left: 20px;
+        width: 30%;
+        text-decoration: none;
+    }
+
+    div.payInfo p.paybtn a, div.payInfo p.paybtn a:link, div.payInfo p.paybtn a:visited {
+        background-color: #327b10;
+        border: 1px solid #235c09;
+        border-radius: 5px;
+        color: #FFF;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 18px;
+        height: 48px;
+        line-height: 48px;
+        width: 30%;
+    }
+</style>
+<div class="payInfo"><p class="info">该视频为收费视频，请购买后观看</p>
+    <p class="title">您要购买的视频：《小学三年级语文视频教程》</p>
+    <p class="pay">需支付论坛币：<?php $pay = videoURL(); echo $pay[0][1];?></p><p class="paybtn">
+        <a class="btn1" href="<?php  echo $pay[0][0];?>" target="_blank">立即订阅</a>
+        <a class="btn2" href="http://wpa.qq.com/msgrd?v=3&amp;uin=747097006&amp;site=qq&amp;menu=yes" target="_blank">
+            <i class="qqLogo"></i>在线咨询
+        </a>
+    </p>
+</div>
+
 <?php $this->display('layouts/footer.phtml'); ?>
+
+<script type="text/javascript" src="/assets/js/html5media.min.js"></script>
+<script type="text/javascript" src="/assets/js/jquery.blockUI.js"></script>
 <script type="text/javascript">
     //如果你不需要某项设置，可以直接删除，注意var flashvars的最后一个值后面不能有逗号
     function loadedHandler() {
@@ -241,14 +322,19 @@
             isNumber = false;
             console.log('这里的弹出提示代码可以改成执行其它动作的代码');
             //这时是判断当播放时间大于10，并且没有执行过试看判断的情况下进行判断。
-            //这里可以弹出登陆层或弹幕提示层
 
+            //这里可以弹出登陆层或弹幕提示层
+            $('#a1').block({
+                message: $('.payInfo'),
+                css: { width: '100%' }
+            });
 
         }
     }
 
 
     var vf = GetQueryString('id');
+    var thumb = $('#myList').attr('thumb');
     var flashvars = {
         //f:'http://movie.ks.js.cn/flv/other/1_0.mp4',  
         f: '/index/show?vfs=' + vf,
@@ -257,7 +343,8 @@
         c: '0', // 1 读取配置ckplayer.xml
         e: '1',
         p: '0', //视频默认0是暂停，1是播放，2是不加载视频
-        i: 'http://www.ckplayer.com/static/images/cqdw.jpg',
+        //i: 'http://www.ckplayer.com/static/images/cqdw.jpg',
+        i: thumb,
         wh: '16:9',
         h: 1,
         loaded: 'loadedHandler'//当播放器加载完成后发送该js函数loadedHandler
@@ -266,4 +353,23 @@
     var video = ['/index/show?id=' + vf + '->ajax/post/utf-8'];
     CKobject.embed('/ckplayer/ckplayer/ckplayer.swf', 'a1', 'ckplayer_a1', '100%', '100%', true, flashvars, video, params);  // true 优先使用H5 
 
+    // 遮罩测试
+    /*
+    $('.fb-icon').click(function () {
+        $('#a1').block({
+            message: $('.payInfo'),
+            css: { width: '100%' }
+        });
+    });
+    */
+    $(document).ready(function() { 
+        $(document).on('bind','#ckplayer_a1',function(){
+            $(this).bind('contextmenu',function() { return false; });
+            $(this).attr('crossorigin','anonymous');
+        });
+     
+    });
 </script>
+
+
+
