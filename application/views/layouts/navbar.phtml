@@ -288,7 +288,7 @@
                                             }, 3000);
                                             return false;
                                         }
-                                        $.post("/sub/settelco", {"msisdn": msisdn,"password":password,"telco":telco},
+                                        $.post("/sub/mtlogin", {"msisdn": msisdn,"password":password,"telco":telco},
                                             function (data) {
                                                 if(data.status == 200){
                                                     var tip  = data.content;
@@ -312,8 +312,6 @@
                                                 }
                                                 console.log(data); //  2pm
                                             }, "json");
-
-                                        
                                     });
                                 });
                             </script>

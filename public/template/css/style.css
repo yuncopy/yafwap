@@ -73,7 +73,7 @@ img {
 }
 .navbar-header h1{
 	color:#fff;
-	font-size:40px;
+	font-size:30px;
 }
 .navbar-header img{
 	width:22%;
@@ -224,7 +224,7 @@ ul.callbacks_tabs.callbacks1_tabs {
 
 /*--Trend--*/
 .trend-w3layouts,.new-w3-agile,.services-agileits-w3layouts,.about-agileinfo,.team-w3layouts,.gallery-w3layouts,.contact-agileinfo,.events-w3layouts,.blog{
-	padding:50px 0px;
+	padding:30px 0px;
 }
 .trend-w3layouts h2,.new-w3-agile h3,.services-agileits-w3layouts h3,.services-bottom-w3-agileits h3,.about-agileinfo h2,.team-w3layouts h3,.gallery-w3layouts  h2,.contact-agileinfo h2,.events-w3layouts h2{
 	font-size:40px;

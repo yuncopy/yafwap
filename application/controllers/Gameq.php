@@ -11,9 +11,9 @@ class GameqController extends AbstractController {
     //入口
     protected $category = [ 11,12,5 ];
     protected  $server_video = 'http://vas.vietteltelecom.vn/MPS/';
-    private $demo = true;  // 模拟测试  
+    private $demo = false;  // 模拟测试  
     
-    // http://125.212.233.65:41802/gameq/index?svid=vnd999
+    //访问地址 http://125.212.233.65:41802/gameq/index?svid=vnd999
     public function indexAction(){
         //dd(getTelco());
         $telcoName_Arr = self::$telco_arr;
@@ -22,12 +22,12 @@ class GameqController extends AbstractController {
         if($telcoName_Arr['status']== 200){  // 成功探测到运营商
             netType('3G');  // 设置网络方式
             switch ($telcoName){
-                case 'viettel':  //http://125.212.233.65:41801/index/index?svid=vnd998
+                case 'viettel': 
                         $data = $this->getRequest()->getQuery("DATA", false);  //$this->input->get('DATA',false);  会过滤特殊字符，不能使用
                         $svid = $this->input->get('svid','');
                         $sessionid = $this->input->get('sessionid','');
                         //microtime_float(4);
-                        $data_encrypt = $this->aes_encrypt_decrypt_video($data,$svid,$sessionid); //探测手机号
+                        $data_encrypt = $this->aes_encrypt_decrypt_gameq($data,$svid,$sessionid); //探测手机号
                         //dd($data_encrypt);
                         $josn_to_data = json_decode($data_encrypt,true);
                         Log_Log::info(__METHOD__.' viettel init msisdn :' . $data_encrypt, true, true);  // 记录日志
@@ -44,7 +44,7 @@ class GameqController extends AbstractController {
                                  $josn_to_data=[
                                     'CMD'   =>'MSISDN',
                                     'MOBILE'=>'167xxxx115',
-                                    'SVID'  =>'vnd998',
+                                    'SVID'  =>'vnd999',
                                     'REQ'   =>'vnd998@749518263#999999',
                                     'RES'   =>'204',
                                     'TELCO' => $telcoName
@@ -131,24 +131,6 @@ class GameqController extends AbstractController {
         
     }
     
-    
-    
-    
-    // 检查用户是否已经MT
-    private function  loginMsisdn(){
-        $Subscribe = new SubscribeModel();
-        $telco = self::$telco_arr;
-        $msisdn = getmsisdn(); //获取手机号
-        //$msisdn ='966000306';
-        $msisdn_sub = $Subscribe->loginMt($this->site,$telco['operator'],$msisdn);
-        if($msisdn_sub){
-            $IsLogin = systemConfig('IsLogin');
-            $this->session->set($IsLogin,1);  // 设置已经订阅标识
-            return true;
-        }
-    }
-
-
     // 分类
     public function categoryContent($category,$p,$c,$n){
         if($category && $p && $c && $n){
@@ -171,7 +153,25 @@ class GameqController extends AbstractController {
         }
     }
     
-    //观看视频
+    
+    // 检查用户是否已经MT
+    private function  loginMsisdn(){
+        $Subscribe = new SubscribeModel();
+        $telco = self::$telco_arr;
+        $msisdn = getmsisdn(); //获取手机号
+        //$msisdn ='966000306';
+        $msisdn_sub = $Subscribe->loginMt($this->site,$telco['operator'],$msisdn);
+        if($msisdn_sub){
+            $IsLogin = systemConfig('IsLogin');
+            $this->session->set($IsLogin,1);  // 设置已经订阅标识
+            return true;
+        }
+    }
+
+
+   
+    
+    //查看游戏详情
     public function  singleAction(){
        
     }
@@ -180,11 +180,11 @@ class GameqController extends AbstractController {
     /**
     AES 加密  256位   视频业务加密、解密
     */
-    public function aes_encrypt_decrypt_video($data=null,$svid='',$sessionid=''){
+    public function aes_encrypt_decrypt_gameq($data=null,$svid='',$sessionid=''){
         $z = secretConfig('key');
-        $pub_key = secretConfig('pub_key');
-        $pri_key_cp = secretConfig('pri_key_cp');
-        $pub_key_cp = secretConfig('pub_key_cp');
+        $pub_key = secretConfig('gameq_pub_key');
+        $pri_key_cp = secretConfig('gameq_pri_key_cp');
+        $pub_key_cp = secretConfig('gameq_pub_key_cp');
         if(!$data){   // 加密
             $iv = mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND);
             $aes = new Util_Viettelaes($z, 'CBC', $iv);
@@ -195,7 +195,7 @@ class GameqController extends AbstractController {
             if($sessionid) $sessionid = '#'.$sessionid;
             $reqStr = $svid.str_shuffle('123456789').$sessionid;
             $sess = date('YmdHis').str_shuffle('abcd');
-            $data = 'SUB=FUNVIDEO_GOINGAY&REQ='.$reqStr.'&SOURCE=WAP&SESS='.$sess;   // 视频业务参数
+            $data = 'SUB=GAME_BLUEPAY&REQ='.$reqStr.'&SOURCE=WAP&SESS='.$sess;   // 视频业务参数
             $data = pkcs5_pad($data, 16);	
             $value_encrypt_aes = encrypt($data,$aeskey);
             $value_with_key = 'value='.$value_encrypt_aes.'&key='.$aeskey;	
@@ -212,9 +212,10 @@ class GameqController extends AbstractController {
             $value_decrypt = decrypt($value_encrypt_aes,$aeskey);
             
             // 跳转运营商 , 拼接参数
-            $url_mobile = $this->server_video.'mobile.html?PRO=BLUEMOBILE&SER=FUNVIDEO&SUB=FUNVIDEO_GOINGAY&DATA='.urlencode( $data_encrypted).'&SIG='.$signature;
+            $url_mobile = $this->server_video.'mobile.html?PRO=VAS_GAME&SER=GAME9029&SUB=GAME_BLUEPAY&DATA='.urlencode( $data_encrypted).'&SIG='.$signature;
             $data_encrypt['status'] = 201;
             $data_encrypt['redirect'] = $url_mobile;
+            //dd($data_encrypt);
             return json_encode($data_encrypt);  // 获取跳转链接
         }else if($data){  // 解密
             // 成功解密：DATA=CmGuz2Dny3LJ8GPatJ2oAvEXYc4cwZ JR2451lWcyIkkNSZ/1FJp9PLSQgh54/1 I8qzniBII/9NiskxFj61NivJaUGYNkALpeAu9NaLLJAeABCqywFPi7j5MmdJ/mZwSmfjYsY5AYpC1uw4mgrTzJQ 2yLTkmk XMC9HzRFWQYa7yERHsgZ2E/FPyiGinL5C9XMtWxgi55GrIyYDMR95dXB7m51e2vg1oYu0pgxz17Wgy0ZEaiTa3sAsY4ZUlc/dSwHiKks8BAOnyXoVkGKZGzW m9Z2lKP3icvK6GUIg5lyHNGvfnXn8YUmUEo/aa9LPQZ0uJQL Fr K0pWj8 9gj454nEJvAWtblBIRLlxq7eg00i02eOwFPP9WFUnZNwIOG/1NeQ9Z/M9InrqZXrXV0KIe7jxhvQ43yN3oKiBHb0QK5wVJKn9y2jJb8GofyTeV7f7EgkQSwBXMZn8gS5jYxomixBfYoW7sWUJQTPzuldybcHE7pBiE6jFAMn dbSUZAjYv3yUWxDSFw3ulhmFDH0H16Ff5q2q/JuArp/pd2aiipDtpIB9p0IWFEzTPL3m ArLkn76NCjWb4vj8FZ SbY5rfwknxomH0mZZJ RqmCJq yFHQ 5K63NT4h7ZexMskkJc6LQSKG5FXIU/FBwbgm7Aq91tIHfwIfzvnvvY4=
@@ -239,88 +240,33 @@ class GameqController extends AbstractController {
     }
     
     
-    //获取手机号
-    public function vinaphone_phone(){
-        $server = $this->getRequest()->getServer(); //$_SERVER 
-        function nginx_request_headers($server) { 
-            foreach($server as $key=>$value) { 
-                if (substr($key,0,5)=="HTTP_") {
-                    $out[$key]=$value; 
-                } 
-            } 
-            return $out; 
-	}
-        $headerInfo = nginx_request_headers($server);
-        $msisdn 	= isset($headerInfo['HTTP_MSISDN']) ? trim($headerInfo['HTTP_MSISDN']) : '';
-        $xipaddress = isset($headerInfo['HTTP_X_IPADDRESS']) ? trim($headerInfo['HTTP_X_IPADDRESS']):''; 
-
-        $jsondata =array(
-            "ip"=> $xipaddress,"msisdn"=> $msisdn
-        );
-        Log_Log::info(__METHOD__.' content init mobifone reg:' . json_encode($jsondata), true, true);  // 记录日志
-        return $jsondata;
-    }
-
-    
-
-    // mobifone 加密解密
-    public function mobifone_encrypt_decrypt($data,$signature,$svid,$sessionid){
+    // 游戏列表
+    public function gamesAction(){
         
-        //  http://125.212.233.65:41801/index/index?svid=vnd3&sessionid=22222
-        $obj = new Util_Encryption(); //实例化加密类
-        if($data == false){
-            $num = '1234567890';
-            //必要参数
-            $cpCode = secretConfig('mobifone_cpCode');
-            $key    = secretConfig('mobifone_key');
-
-            if($svid) $svid = $svid.'@';
-            if($sessionid) $sessionid = '#'.$sessionid;
-            $cpreqid = $svid.str_shuffle('123456').$sessionid;
-            
-            $server =$this->getRequest()->getServer();
-            $http_type = ((isset($server['HTTPS']) && $server['HTTPS'] == 'on') || (isset($server['HTTP_X_FORWARDED_PROTO']) && $server['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
-            $callback = $http_type.$server['HTTP_HOST'].'/index/index'; // 路由地址
-            $cprequestid =  $cpreqid;   //加密串
-            $returnback = $callback; 	//结果回调地址使用当前地址URL  http://baidu.com  http://125.212.233.65:41801/index/index
-            $patameter = 'cprequestid='.$cprequestid.'&returnback='.$returnback;
-            $encryRes = $obj->encode($patameter);
-
-            //请求加密的数据
-            $dataStr = 'data='.$encryRes.'&key='.$key;
-            $dataStrEncrypt = $obj->encryptData($dataStr);
-
-            //生成签名
-            $signature = $obj->createSignature($dataStrEncrypt);
-
-            //请求地址
-            $url = "http://m.mgame.vn/paymentgw/index.php?r=pDefault/index&cpid={$cpCode}&cmd=DETECTION&data={$dataStrEncrypt}&signature=".$signature;
-            $data_encrypt['status'] = 201;
-            $data_encrypt['redirect'] = $url;
-            //dd($data_encrypt);
-            return json_encode($data_encrypt);  // 获取跳转链接
-        }else{
-            // 解密
-            $result = $obj->decrypData($data,$signature);
-            if($result){
-                //返回数据
-                $array = explode('&',$result);
-                $num = count($array);
-                if($num > 0){
-                    foreach($array as $k=>$v){
-                        $res = explode('=',$v);
-                        $value = !empty($res[1])? $res[1]: '';
-                        $dataArr[$res[0]] = $value;
-                    }
-                }
-            }
-            $dataArr['status'] = 200;
-            return json_encode($dataArr);
-        }	
     }
-
-
-
+    
+    //引导
+    public function guideAction(){
+        echo 1111;
+        return false;
+    }
+    
+    
+    //引导
+    public function explainAction(){
+        echo 222;
+        return false;
+    }
+    
+    public function contactAction(){
+        echo 33333;
+        return false;
+    }
+    
+    public function introduceAction(){
+        echo 4444;
+        return false;
+    }
 
     public function infoAction(){
         session_start();

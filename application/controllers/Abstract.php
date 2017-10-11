@@ -133,7 +133,7 @@ abstract class AbstractController extends Yaf_Controller_Abstract
        $key= systemConfig('Options');  //unserialize
        $cache_options = $this->session->get($key);
        $site = unserialize($cache_options);
-       if(!$cache_options){
+       if(!$site){
             $options = new OptionsModel();
             $site = $options->getOptions($this->site);
             $this->session->set($key, serialize($site));

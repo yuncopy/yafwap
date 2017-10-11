@@ -186,11 +186,30 @@ class SubController extends AbstractController {
             $data = "SUB={$sub}&CATE={$cate}&ITEM={$item}&SUB_CP={$sub_cp}&CONT={$cont}&PRICE={$price}&REQ={$req}&MOBILE={$msisdn}&SOURCE=WAP";
             $data = pkcs5_pad($data, 16);
             //B1. Ma hoa du lieu bang AES
-              // 密钥
-            $z = secretConfig('key');
-            $pub_key = secretConfig('pub_key');
-            $pri_key_cp = secretConfig('pri_key_cp');
-            $pub_key_cp = secretConfig('pub_key_cp');
+            //
+            
+            
+            $site = $this->site;
+            if($site == 1){  // 视频站点 // 视频订阅
+                // 密钥
+                $z = secretConfig('key');
+                $pub_key = secretConfig('pub_key');
+                $pri_key_cp = secretConfig('pri_key_cp');
+                $pub_key_cp = secretConfig('pub_key_cp');
+                $PRO = 'BLUEMOBILE';
+                $SER = 'FUNVIDEO';
+            }else if($site == 2){ // 游戏站点 // 游戏订阅
+                 // 密钥
+                $z = secretConfig('key');
+                $pub_key = secretConfig('gameq_pub_key');
+                $pri_key_cp = secretConfig('gameq_pri_key_cp');
+                $pub_key_cp = secretConfig('gameq_pub_key_cp');
+                $PRO = 'VAS_GAME';
+                $SER = 'GAME9029';
+            }else{
+                // TODO
+            }
+
             $iv = mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND);
             $aes = new Util_Viettelaes($z, 'CBC', $iv);
             $encrypted = $aes->encrypt();     
@@ -210,7 +229,7 @@ class SubController extends AbstractController {
             $value_decrypt = decrypt($value_encrypt_aes,$aeskey);
             
             // 跳转URL
-            $url_charge = $this->server."charge.html?PRO=BLUEMOBILE&CMD=REGISTER&SER=FUNVIDEO&SUB=".$sub."&DATA=".urlencode( $data_encrypted).'&SIG='.$signature;
+            $url_charge = $this->server."charge.html?PRO=".$PRO."&CMD=REGISTER&SER=".$SER."&SUB=".$sub."&DATA=".urlencode( $data_encrypted).'&SIG='.$signature;
             
             Log_Log::info(__METHOD__.' content init viettel reg:' . $url_charge, true, true);  // 记录日志
             
@@ -284,7 +303,7 @@ class SubController extends AbstractController {
     }
     
      //在没有探测到运营商情况下选择营运商并设置
-     public function  settelcoAction(){
+     public function  mtloginAction(){
         $post = $this->getRequest()->getPost();
         if($post){
             $msisdn = $post['msisdn'];
