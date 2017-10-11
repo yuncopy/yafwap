@@ -9,7 +9,7 @@ class GameqController extends AbstractController {
     
     
     //入口
-    protected $category = [ 11,12,5 ];
+    protected $category = [ 22,23,24,25,26];
     protected  $server_video = 'http://vas.vietteltelecom.vn/MPS/';
     private $demo = false;  // 模拟测试  
     
@@ -115,18 +115,18 @@ class GameqController extends AbstractController {
         // 检查用户是否登录
         $this->loginMsisdn();
         
-        // 展示内容列表
-        $content =  new ContentsModel(); 
-        // 分类ID
-        $where_cid = $this->category;
-        //$group_contents = $content->getContents($where_cid);
-        $group_contents = $this->categoryContent($where_cid,true,true,8); // 一排4个
-        $slideshow = $content->getSlideshow([10]);  // 幻灯片
-        $group_title = array_column($this->menus(true),'name','id');
-        $this->assign(array('video'=>$content->videoTop3()));
-        $this->assign(array('group'=>$group_contents));
-        $this->assign(array('group_menus'=>$group_title));
-        $this->assign(array('slideshow'=>$slideshow));
+//        // 展示内容列表
+//        $content =  new ContentsModel(); 
+//        // 分类ID
+//        $where_cid = $this->category;
+//        //$group_contents = $content->getContents($where_cid);
+//        $group_contents = $this->categoryContent($where_cid,true,true,8); // 一排4个
+//        $slideshow = $content->getSlideshow([10]);  // 幻灯片
+//        $group_title = array_column($this->menus(true),'name','id');
+//        $this->assign(array('video'=>$content->videoTop3()));
+//        $this->assign(array('group'=>$group_contents));
+//        $this->assign(array('group_menus'=>$group_title));
+//        $this->assign(array('slideshow'=>$slideshow));
         
         
     }
