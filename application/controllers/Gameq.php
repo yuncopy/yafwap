@@ -123,7 +123,7 @@ class GameqController extends AbstractController {
 //        $group_contents = $this->categoryContent($where_cid,true,true,8); // 一排4个
 //        $slideshow = $content->getSlideshow([10]);  // 幻灯片
 //        $group_title = array_column($this->menus(true),'name','id');
-//        $this->assign(array('video'=>$content->videoTop3()));
+//        $this->assign(array('video'=>$content->videoTop3($where_cid)));
 //        $this->assign(array('group'=>$group_contents));
 //        $this->assign(array('group_menus'=>$group_title));
 //        $this->assign(array('slideshow'=>$slideshow));
