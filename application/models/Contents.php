@@ -87,11 +87,12 @@ class ContentsModel extends BlueModel
 
 
     // 前三视频内容
-    public function videoTop3(){
+    public function videoTop3($cid){
         //获取数据
         if(self::$third == null){
             $table = $this->table;
             self::$third = $this->select($table, $this->filed_name,[
+                "cid"=>$cid,
                 "ORDER" => [
                     "click" => "DESC"
                 ],
