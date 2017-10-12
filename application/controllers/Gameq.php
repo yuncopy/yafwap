@@ -256,25 +256,21 @@ class GameqController extends AbstractController {
     
     //引导
     public function guideAction(){
-        echo 1111;
-        return false;
+    
     }
     
     
     //引导
     public function explainAction(){
-        echo 222;
-        return false;
+       
     }
     
     public function contactAction(){
-        echo 33333;
-        return false;
+      
     }
     
     public function introduceAction(){
-        echo 4444;
-        return false;
+       
     }
 
     public function infoAction(){

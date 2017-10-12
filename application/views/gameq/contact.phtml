@@ -1,0 +1,47 @@
+<?php $this->display('layoutg/header.phtml'); ?>
+<link href="/template/css/popup-box.css" rel="stylesheet" type="text/css" media="all" />
+<!-- banner -->
+<div class="sub-banner">
+    <!-- Navbar -->
+    <?php $this->display('layoutg/navbar.phtml'); ?>
+</div>
+<div class="contact-agileinfo">
+	<div class="container">
+		<h2>Reach Us</h2>
+		<div class="col-md-4 contact-left-agile">
+			<div class="address-w3-agileits" id="address">
+				<h4>Address</h4>
+				<address>
+				<ul>
+					<li><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Parma Via Modena</li>
+					<li><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Sant'Agata Bolognese</li>
+					<li><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> BO, Italy</li>
+				</ul>
+				</address>
+			</div>
+			<div class="phone-agileits-w3layouts" id="phone">
+				<h4>Phone</h4>
+				<p><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span> +1 (734) 123-4567</p>
+				<p><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span> +1 (739) 648-7114</p>
+			</div>
+			<div class="email">
+				<h4>Email</h4>
+				<p><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> <a href="mailto:mail@example.com"> info@example.com</a></p>
+			</div>
+		</div>
+		<div class="col-md-8 contact-right-w3">
+			<form action="#" method="post">
+				<input type="text" class="text" name="Name" placeholder="Name" required="">
+				<input type="text" class="text" name="Email" placeholder="Email" required="">
+				<input type="text" class="text" name="Phone" placeholder="Phone" required="">
+				<input type="text" class="text" name="City" placeholder="City" required="">
+				<textarea name="Message" placeholder="Message" required=""></textarea>
+				<input type="submit" class="more_btn" value="Send Message">
+			</form>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+<?php $this->display('layoutg/footer.phtml'); ?>
+</body>
+</html>
