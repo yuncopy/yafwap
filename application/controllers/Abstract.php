@@ -41,6 +41,7 @@ abstract class AbstractController extends Yaf_Controller_Abstract
         $this->getTelco(); // 获取运营商
         $this->checkLogin();  // 检查是否登录系统
         $this->appLogin();
+        $this->gameFooter();
     }
    
     // 检查是否MT成功过
@@ -57,7 +58,13 @@ abstract class AbstractController extends Yaf_Controller_Abstract
         $this->assign(array('applogin'=>$applogin));
     }
 
-
+    // 游戏站点底部
+    public function gameFooter(){
+        if($this->site == 2){
+           $gameFooter = (new ContentsModel())->getTrending([ 22,23,24,25,26],'8','created_at');
+           $this->assign(array('gameFooter'=>$gameFooter));
+        }
+    }
 
     //获取运营商
     public function getTelco(){

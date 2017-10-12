@@ -74,10 +74,10 @@ class IndexController extends AbstractController {
                                 
                                 case 'REGISTER':  // 订阅成功
                                     if (($RES == 0) || ($RES == 408)){
-                                        $GetMsisdn = $josn_to_data['MOBILE'];
+                                        $msisdn = $josn_to_data['MOBILE'];
                                         $this->session->set($GetMsisdn,$msisdn);
-                                        // 订阅记录数据库
-                                        saveLog('REGISTER',$josn_to_data);
+                                        saveLog('REGISTER',$josn_to_data);// 订阅记录数据库
+                                        
                                         if($this->loginMsisdn()){
                                             $key_http_referer = 'HTTP_REFERER_SUB';
                                             $REQUEST_URI = $this->session->getFlash($key_http_referer);
@@ -168,9 +168,10 @@ class IndexController extends AbstractController {
         $Subscribe = new SubscribeModel();
         $telco = self::$telco_arr;
         $msisdn = getmsisdn(); //获取手机号
-        //$msisdn ='966000306';
+        //$msisdn ='1667589823';
+        //$telco['operator'] = 'viettel';
         $msisdn_sub = $Subscribe->loginMt($this->site,$telco['operator'],$msisdn);
-        if($msisdn_sub){
+        if($msisdn_sub){  
             $IsLogin = systemConfig('IsLogin');
             $this->session->set($IsLogin,1);  // 设置已经订阅标识
             return true;

@@ -9,6 +9,7 @@
 class ContentsModel extends BlueModel
 {
     protected  $table  = 'contents';  // 表名
+    private $table_menus = 'menus';
     protected $write_mode = true;  // 使用读写数据库
     static public $data = null;
     static public $third = null;  // 热度前三名
@@ -103,7 +104,7 @@ class ContentsModel extends BlueModel
     }
     
     //幻灯片 ( Cricket ) 
-    public function getSlideshow($cid){
+    public function getSlideshow($cid,$site=1){
         $filed_name = $this->filed_name;
         if(is_array($cid) && !empty($cid)){
             $contents = $this->select($this->table,$filed_name,[
@@ -112,11 +113,16 @@ class ContentsModel extends BlueModel
                     "click" => "DESC"
                 ],
                 "LIMIT" => [0, 16]]);
-            $columns = 4; 
-            if($contents){
-               $content_columns = array_chunk($contents, floor(count($contents) / $columns));
-               array_pop ( $content_columns );
+            if($site== 1){
+                $columns = 4; 
+                if($contents){
+                   $content_columns = array_chunk($contents, floor(count($contents) / $columns));
+                   array_pop ( $content_columns );
+                }
+            }else if($site== 2){
+                $content_columns = $contents;
             }
+            
         }
         return $content_columns;
     }
@@ -247,6 +253,41 @@ class ContentsModel extends BlueModel
         }else{
             return $this->get($this->table,$this->filed_name,$where);
         }
+    }
+    
+    
+    // // 游戏站点  Trending Games
+    public function getTrending($cid,$limit = 3,$order='click'){
+        //SELECT a.id,a.thumb,b.name FROM contents as a LEFT JOIN menus b ON a.cid = b.id WHERE a.cid in ('12','10','11') GROUP BY a.cid ORDER BY click DESC
+        //SELECT a.id,a.thumb,b.name FROM contents as a LEFT JOIN menus b ON a.cid = b.id WHERE a.cid =12 ORDER BY click DESC LIMIT 1
+        $data = [];
+        if($cid && is_array($cid)){
+            foreach ($cid as $val){
+                $data[] = $this->select($this->table,
+                        ["[>]".$this->table_menus => ["cid" => "id"]],
+                        [$this->table.'.id',$this->table.'.thumb',$this->table_menus.'.name'],
+                        [$this->table.'.cid'=>$val,"ORDER" => [$this->table.".".$order => "DESC"],"LIMIT" => $limit]
+                    );
+            }
+            if($data){
+                $games= array();
+                foreach ($new_games as $kk => $vv){
+                    array_map(function($v) use (&$games){
+                       array_push($games,$v);
+                    }, $vv);
+                }
+                $array_random_assoc = function ($arr, $num) {
+                    $keys = array_keys($arr);
+                    shuffle($keys);
+                    $r = array();
+                    for ($i = 0; $i < $num; $i++) {
+                        $r[$keys[$i]] = $arr[$keys[$i]];
+                    }
+                    return $r;
+                };
+            }
+        }
+        return $array_random_assoc($games,$limit);
     }
 
 }

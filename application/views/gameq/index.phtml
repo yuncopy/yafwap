@@ -4,23 +4,15 @@
             <!-- Navbar -->
             <?php $this->display('layoutg/navbar.phtml'); ?>
             <!-- //Navbar -->
-
             <!-- Slider -->
             <div class="slider">
                 <ul class="rslides" id="slider">
-                    <li>
-                        <img src="/template/images/banner3.jpg" alt="" />
-                    </li>
-                    <li>
-                        <img src="/template/images/banner2.jpg" alt="" />
-                    </li>
-                    <li>
-                        <img src="/template/images/banner1.jpg" alt="" />
-                    </li>
+                    <?php if($slideshow){ foreach ($slideshow as $kk => $value){?>
+                    <li><img src="<?php echo $value['thumb'];?>" alt="<?php echo $value['title'];?>" /></li>
+                    <?php }}?>
                 </ul>
             </div>
             <!-- //Slider -->
-
         </div>
         <!-- Banner-Slider-JavaScript -->
         <script src="/template/js/responsiveslides.min.js"></script>
@@ -43,31 +35,15 @@
             
             <div class="container">
                 <h2>Trending Games</h2>
-                <ul id="flexiselDemo1">			
-                    <li>
-                        <div class="trend-grid">
-                            <h4>Racing Games</h4>
-                            <img src="/template/images/tg1.jpg" alt=" " class="img-responsive" />
-                        </div>
-                    </li>
-                    <li>
-                        <div class="trend-grid">
-                            <h4>3D Games</h4>
-                            <img src="/template/images/tg2.jpg" alt=" " class="img-responsive" />
-                        </div>
-                    </li>
-                    <li>
-                        <div class="trend-grid">
-                            <h4>Action Games</h4>
-                            <img src="/template/images/tg3.jpg" alt=" " class="img-responsive" />
-                        </div>
-                    </li>
-                    <li>
-                        <div class="trend-grid">
-                            <h4>Toy Games</h4>
-                            <img src="/template/images/tg4.jpg" alt=" " class="img-responsive" />
-                        </div>
-                    </li>
+                <ul id="flexiselDemo1">	
+                    <?php if($group){ foreach ($group as $kk => $value){?>
+                        <li>
+                            <div class="trend-grid">
+                                <h4><?php echo $value[0]['name'];?></h4>
+                                <img src="<?php echo $value[0]['thumb'];?>" alt=" " class="img-responsive" />
+                            </div>
+                        </li>
+                    <?php }}?>
                 </ul>
                 <script type="text/javascript">
                     $(window).load(function () {
@@ -139,68 +115,19 @@
         <div class="new-w3-agile">
             <div class="container">
                 <h3>New Games</h3>
+                <?php if($newgames){ foreach ($newgames as $kk => $value){?>
                 <div class="col-md-3 new-grid-w3l view view-eighth">
-                    <img src="/template/images/ng1.jpg" alt=" " />
+                    <img src="<?php echo $value['thumb'];?>" alt=" " />
                     <div class="mask">
-                        <a href="/gameq/single"><h4>Click here</h4></a>
+                        <a href="/gameq/single?id=<?php echo $value['id'];?>"><h4>Click here</h4></a>
                         <p>To learn more about this</p>
                     </div>
                 </div>
-                <div class="col-md-3 new-grid-w3l view view-eighth">
-                    <img src="/template/images/ng2.jpg" alt=" " />
-                    <div class="mask">
-                        <a href="/gameq/single"><h4>Click here</h4></a>
-                        <p>To learn more about this</p>
-                    </div>
-                </div>
-                <div class="col-md-3 new-grid-w3l view view-eighth">
-                    <img src="/template/images/ng3.jpg" alt=" " />
-                    <div class="mask">
-                        <a href="/gameq/single"><h4>Click here</h4></a>
-                        <p>To learn more about this</p>
-                    </div>
-                </div>
-                <div class="col-md-3 new-grid-w3l view view-eighth">
-                    <img src="/template/images/ng4.jpg" alt=" " />
-                    <div class="mask">
-                        <a href="/gameq/single"><h4>Click here</h4></a>
-                        <p>To learn more about this</p>
-                    </div>
-                </div>
-                <div class="col-md-3 new-grid-agile view view-eighth">
-                    <img src="/template/images/ng5.jpg" alt=" " />
-                    <div class="mask">
-                        <a href="/gameq/single"><h4>Click here</h4></a>
-                        <p>To learn more about this</p>
-                    </div>
-                </div>
-                <div class="col-md-3 new-grid-agile view view-eighth">
-                    <img src="/template/images/ng6.jpg" alt=" " />
-                    <div class="mask">
-                        <a href="/gameq/single"><h4>Click here</h4></a>
-                        <p>To learn more about this</p>
-                    </div>
-                </div>
-                <div class="col-md-3 new-grid-agile view view-eighth">
-                    <img src="/template/images/ng7.jpg" alt=" " />
-                    <div class="mask">
-                        <a href="/gameq/single"><h4>Click here</h4></a>
-                        <p>To learn more about this</p>
-                    </div>
-                </div>
-                <div class="col-md-3 new-grid-agile view view-eighth">
-                    <img src="/template/images/ng8.jpg" alt=" " />
-                    <div class="mask">
-                        <a href="/gameq/single"><h4>Click here</h4></a>
-                        <p>To learn more about this</p>
-                    </div>
-                </div>
+                <?php }}?>
                 <div class="clearfix"></div>
             </div>
         </div>
         <!-- //new games-->
-
-
 
         <div class="services-bottom-w3-agileits">
             <div class="container">

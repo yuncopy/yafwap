@@ -115,22 +115,31 @@ class GameqController extends AbstractController {
         // 检查用户是否登录
         $this->loginMsisdn();
         
-//        // 展示内容列表
-//        $content =  new ContentsModel(); 
-//        // 分类ID
-//        $where_cid = $this->category;
-//        //$group_contents = $content->getContents($where_cid);
-//        $group_contents = $this->categoryContent($where_cid,true,true,8); // 一排4个
-//        $slideshow = $content->getSlideshow([10]);  // 幻灯片
-//        $group_title = array_column($this->menus(true),'name','id');
-//        $this->assign(array('video'=>$content->videoTop3($where_cid)));
-//        $this->assign(array('group'=>$group_contents));
-//        $this->assign(array('group_menus'=>$group_title));
-//        $this->assign(array('slideshow'=>$slideshow));
-        
-        
+        // 展示内容列表
+        $content =  new ContentsModel(); 
+        // 分类ID
+        $where_cid = $this->category;
+        $slideshow = $content->getSlideshow([21],$this->site);  // 幻灯片
+        $group_contents = $this->trendGames($where_cid,1); // 一个
+        $newGames = $this->newGames($where_cid,8);
+        $this->assign(array('video'=>$content->videoTop3($where_cid)));
+        $this->assign(array('group'=>$group_contents));
+        $this->assign(array('slideshow'=>$slideshow));
+        $this->assign(array('newgames'=>$newGames));
+
     }
     
+    
+    // 游戏站点  Trending Games
+    public function trendGames($cid,$limit){
+        return(new ContentsModel())->getTrending($cid,$limit);
+    }
+    
+    //New Games
+    public function newGames($cid,$limit,$order='created_at'){
+        return (new ContentsModel())->getTrending($cid,$limit,$order);
+    }
+
     // 分类
     public function categoryContent($category,$p,$c,$n){
         if($category && $p && $c && $n){
@@ -159,7 +168,7 @@ class GameqController extends AbstractController {
         $Subscribe = new SubscribeModel();
         $telco = self::$telco_arr;
         $msisdn = getmsisdn(); //获取手机号
-        //$msisdn ='966000306';
+        //$msisdn ='1667589823';
         $msisdn_sub = $Subscribe->loginMt($this->site,$telco['operator'],$msisdn);
         if($msisdn_sub){
             $IsLogin = systemConfig('IsLogin');
