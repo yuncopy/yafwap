@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+        <title>内容管理</title>
+
+        <!-- Bootstrap -->
+        <link href="/assets/css/bootstrap.min.css" rel='stylesheet' type='text/css' media="all" />
+        <link rel="stylesheet" type="text/css" href="http://fex.baidu.com/webuploader/css/webuploader.css">
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+          <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <style>
+        #picker {
+            display: inline-block;
+            line-height: 1.428571429;
+            vertical-align: middle;
+            margin: 0 12px 0 0;
+        }
+        #picker .webuploader-pick {
+            padding: 6px 12px;
+            display: block;
+        }
+        .uploader-list {
+            width: 100%;
+            overflow: hidden;
+        }
+        .file-item {
+            float: left;
+            position: relative;
+            margin: 0 20px 20px 0;
+            padding: 4px;
+        }
+        .file-item .error {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            background: red;
+            color: white;
+            text-align: center;
+            height: 20px;
+            font-size: 14px;
+            line-height: 23px;
+        }
+        .file-item .info {
+            position: absolute;
+            left: 4px;
+            bottom: 4px;
+            right: 4px;
+            height: 20px;
+            line-height: 20px;
+            text-indent: 5px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow : ellipsis;
+            font-size: 12px;
+            z-index: 10;
+        }
+        .upload-state-done:after {
+            content:"\f00c";
+            font-family: FontAwesome;
+            font-style: normal;
+            font-weight: normal;
+            line-height: 1;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-size: 32px;
+            position: absolute;
+            bottom: 0;
+            right: 4px;
+            color: #4cae4c;
+            z-index: 99;
+        }
+        .file-item .progress {
+            position: absolute;
+            right: 4px;
+            bottom: 4px;
+            height: 3px;
+            left: 4px;
+            height: 4px;
+            overflow: hidden;
+            z-index: 15;
+            margin:0;
+            padding: 0;
+            border-radius: 0;
+            background: transparent;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">内容管理</h3>
+                </div>
+                <div class="panel-body">
+                    <form class="form-horizontal" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">站点</label>
+                            <div class="col-sm-10">
+                                <label class="radio-inline">
+                                    <input type="radio" disabled="true" name='site' value="1" <?php echo $wabsite== 1 ? 'checked' : ''?>/> 视频站点
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" disabled="true"  name='site' value="2" <?php echo $wabsite== 2 ? 'checked' : ''?>> 游戏站点
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">类型(位置)</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" name='cid' id='cid'>
+                                    <?php echo $option;?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-2 control-label">标题</label>
+                            <div class="col-sm-10">
+                                <input type="text" name='title' class="form-control" id="title" placeholder="title">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-2 control-label">发布者</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name='authorid' id="authorid" placeholder="author">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-2 control-label">上传图片</label>
+                            <div class="col-sm-10">
+                                <div id="uploader" class="wu-example">
+                                    <!--用来存放文件信息-->
+                                    <div id="thelist" class="uploader-list"></div>
+                                    <div class="btns">
+                                        <div id="picker">选择文件</div>
+                                        <button id="ctlBtn" class="btn btn-default">开始上传</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        
+                       
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox"> Remember me
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-default">Sign in</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="/assets/js/jquery-1.11.1.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="/assets/js/bootstrap.min.js"></script>
+        <script src="/assets/js/webuploader.min.js"></script>
+        <script src="/assets/js/getting-started.js"></script>
+        
+        
+    </body>
+</html>

@@ -21,11 +21,11 @@
         </div>
         <div class="col-md-5 footer-middle-w3">
             <h4>Latest Games</h4>
-            
-            <div class="col-md-3 img-w3-agile">
-                <a href="single.html"><img src="/template/images/ng1.jpg" alt=" " /></a>
-            </div>
-            
+            <?php if($gameFooter){ foreach ($gameFooter as $kk => $value){?>
+                <div class="col-md-3 img-w3-agile">
+                    <a href="/gameq/single?id=<?php echo $value['id'];?>"><img src="<?php echo $value['thumb']?>" alt="<?php echo $value['name']?>" /></a>
+                </div>
+            <?php }}?>
             <div class="clearfix"></div>
         </div>
         <div class="col-md-4 footer-right-w3">

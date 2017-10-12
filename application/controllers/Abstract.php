@@ -61,8 +61,10 @@ abstract class AbstractController extends Yaf_Controller_Abstract
     // 游戏站点底部
     public function gameFooter(){
         if($this->site == 2){
-           $gameFooter = (new ContentsModel())->getTrending([ 22,23,24,25,26],'8','created_at');
-           $this->assign(array('gameFooter'=>$gameFooter));
+            $game_cid = (new MenusModel) ->getGames($this->site);
+            $id_column = array_column($game_cid, 'id');
+            $gameFooter = (new ContentsModel())->getTrending($id_column,'8','created_at');
+            $this->assign(array('gameFooter'=>$gameFooter));
         }
     }
 
@@ -163,6 +165,7 @@ abstract class AbstractController extends Yaf_Controller_Abstract
                 self::$static_site = 2;  // 游戏站点
             }
        }
+       $this->assign(array('wabsite'=>self::$static_site));
        return  self::$static_site;
    }
    

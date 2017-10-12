@@ -269,26 +269,34 @@ class ContentsModel extends BlueModel
                         [$this->table.'.cid'=>$val,"ORDER" => [$this->table.".".$order => "DESC"],"LIMIT" => $limit]
                     );
             }
-            if($data){
-                $games= array();
-                foreach ($new_games as $kk => $vv){
-                    array_map(function($v) use (&$games){
-                       array_push($games,$v);
-                    }, $vv);
-                }
-                $array_random_assoc = function ($arr, $num) {
-                    $keys = array_keys($arr);
-                    shuffle($keys);
-                    $r = array();
-                    for ($i = 0; $i < $num; $i++) {
-                        $r[$keys[$i]] = $arr[$keys[$i]];
+            if($limit==1){
+                return $data; // 首页
+            }else{
+                if($data){
+                    $games= array();
+                    foreach ($data as $kk => $vv){
+                        array_map(function($v) use (&$games){
+                           array_push($games,$v);
+                        }, $vv);
                     }
-                    return $r;
-                };
-            }
+                    // 随机排序
+                    $array_random_assoc = function ($arr, $num) {
+                        $keys = array_keys($arr);
+                        shuffle($keys);
+                        $r = array();
+                        for ($i = 0; $i < $num; $i++) {
+                            $r[$keys[$i]] = $arr[$keys[$i]];
+                        }
+                        return $r;
+                    };
+                }            
+            } 
         }
         return $array_random_assoc($games,$limit);
     }
+    
+    
+
 
 }
 
