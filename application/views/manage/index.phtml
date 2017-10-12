@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-        <title>内容管理</title>
+        <title>文章内容管理</title>
 
         <!-- Bootstrap -->
         <link href="/assets/css/bootstrap.min.css" rel='stylesheet' type='text/css' media="all" />
@@ -17,13 +17,13 @@
           <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
         <style>
-        #picker {
+        #picker,#picker2 {
             display: inline-block;
             line-height: 1.428571429;
             vertical-align: middle;
             margin: 0 12px 0 0;
         }
-        #picker .webuploader-pick {
+        #picker .webuploader-pick,#picker2 .webuploader-pick {
             padding: 6px 12px;
             display: block;
         }
@@ -80,30 +80,17 @@
             color: #4cae4c;
             z-index: 99;
         }
-        .file-item .progress {
-            position: absolute;
-            right: 4px;
-            bottom: 4px;
-            height: 3px;
-            left: 4px;
-            height: 4px;
-            overflow: hidden;
-            z-index: 15;
-            margin:0;
-            padding: 0;
-            border-radius: 0;
-            background: transparent;
-        }
+       
         </style>
     </head>
     <body>
         <div class="container">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title">内容管理</h3>
+                    <h3 class="panel-title">内容管理 <a class="btn btn-success pull-right btn-xs" href="#" role="button">列表</a></h3>
                 </div>
                 <div class="panel-body">
-                    <form class="form-horizontal" onsubmit="return false;">
+                    <form class="form-horizontal" onsubmit="return false;" id="contenform">
                         <div class="form-group">
                             <label for="inputEmail3" class="col-sm-2 control-label">站点</label>
                             <div class="col-sm-10">
@@ -133,38 +120,77 @@
                         <div class="form-group">
                             <label for="inputPassword3" class="col-sm-2 control-label">发布者</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" name='authorid' id="authorid" placeholder="author">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-2 control-label">上传图片</label>
-                            <div class="col-sm-10">
-                                <div id="uploader" class="wu-example">
-                                    <!--用来存放文件信息-->
-                                    <div id="thelist" class="uploader-list"></div>
-                                    <div class="btns">
-                                        <div id="picker">选择文件</div>
-                                        <button id="ctlBtn" class="btn btn-default">开始上传</button>
-                                    </div>
-                                </div>
-
+                                <input type="text" class="form-control" name='authorid' id="authorid" placeholder="authorid">
                             </div>
                         </div>
                         
-                       
                         <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox"> Remember me
-                                    </label>
+                            <label for="inputPassword3" class="col-sm-2 control-label">视频时</label>
+                            <div class="col-sm-10">
+                                <div class="col-sm-4" style="padding-left:0px;">
+                                    <input type="text" class="form-control" name='authorid' id="time_length" placeholder="time_length">
                                 </div>
+                                <label for="inputPassword3" class="col-sm-2 control-label">观看、下载次数</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" name='authorid' id="authorid" placeholder="author">
+                                </div>
+                            </div>
+                        </div>
+      
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-2 control-label">上传图片</label>
+                            <div class="col-sm-10">
+                                <div class="col-sm-4" style="padding-left:0px;">
+                                    <div id="uploader" class="wu-example">
+                                        <!--用来存放文件信息-->
+                                        <div id="thelist" class="uploader-list"></div>
+                                        <div class="btns">
+                                            <div id="picker">选择文件</div>
+                                            <button id="ctlBtn" class="btn btn-default">开始上传</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <label class="col-sm-2 control-label">或者 外链地址</label>
+                                <div class="col-sm-6" style="padding-right:0px;">
+                                    <input type="text" class="form-control col-sm-4" name='thumb' id="thumb" placeholder="thumb">
+                               </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-2 control-label">观看视频 / 游戏下载</label>
+                            <div class="col-sm-10">
+                                <div class="col-sm-4" style="padding-left:0px;">
+                                    <div id="uploader2" class="wu-example">
+                                        <!--用来存放文件信息-->
+                                        <div id="thelist2" class="uploader-list"></div>
+                                        <div class="btns">
+                                            <div id="picker2">选择文件</div>
+                                            <button id="ctlBtn2" class="btn btn-default">开始上传</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <label class="col-sm-2 control-label">或者 外链地址</label>
+                                <div class="col-sm-6" style="padding-right:0px;">
+                                    <input type="text" class="form-control col-sm-4" name="seeds" id="seeds" placeholder="author">
+                               </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-2 control-label">描述</label>
+                            <div class="col-sm-10">
+                                <textarea  name="desc" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-2 control-label">文本说明</label>
+                            <div class="col-sm-10">
+                                <div id="editor"></div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <button type="submit" class="btn btn-default">Sign in</button>
+                                <button type="button" class="btn btn-primary pull-right">SAVE</button>
                             </div>
                         </div>
                     </form>
@@ -176,8 +202,18 @@
         <!-- Include all compiled plugins (below), or include individual files as needed -->
         <script src="/assets/js/bootstrap.min.js"></script>
         <script src="/assets/js/webuploader.min.js"></script>
-        <script src="/assets/js/getting-started.js"></script>
+        <script src="/assets/js/siteuploader.js"></script>
+        <script src="/ckeditor/ckeditor.js"></script>
+        <script src="/assets/js/wap-ckeditor.js"></script>
         
         
+        <script>
+            CKEDITOR.config.height = 200;
+            CKEDITOR.config.width = 'auto';
+            initSample();  // 初始化编辑器
+            
+            
+            
+        </script>
     </body>
 </html>
