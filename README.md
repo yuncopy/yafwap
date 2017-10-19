@@ -51,7 +51,7 @@ server {
 ### 框架外部扩展，请参考
 - 可以利用相关：http://www.initphp.com/
 
-### 学习YAF框架 
+###  学习YAF框架 
 - 入口学习：https://www.lvtao.net/sort/yaf/	
 
 备注：内部已经有实例代码。
