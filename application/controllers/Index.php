@@ -18,6 +18,7 @@ class IndexController extends AbstractController {
         $telcoName_Arr = self::$telco_arr;
         $telcoName = $telcoName_Arr['operator'];
         //dd($telcoName_Arr);
+        //dd($telcoName_Arr);
         if($telcoName_Arr['status']== 200){  // 成功探测到运营商
             netType('3G');  // 设置网络方式
             switch ($telcoName){
